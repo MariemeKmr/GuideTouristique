@@ -6,12 +6,12 @@
     @include('partials.navbar')
 
     <main class="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-        <a href="{{ route('visitor.destinations.index') }}" class="text-sm text-gray-500 hover:text-gray-900">&larr; Toutes les destinations</a>
+        <a href="{{ route('visitor.destinations.index') }}" class="text-sm text-gray-500 hover:text-nuit">&larr; Toutes les destinations</a>
 
         <div class="mt-4 rounded-lg border border-gray-200 bg-white p-6">
             <div class="flex items-start justify-between gap-3">
                 <div>
-                    <h1 class="text-2xl font-semibold text-gray-900">{{ $destination->name }}</h1>
+                    <h1 class="text-2xl font-semibold text-nuit">{{ $destination->name }}</h1>
                     <p class="mt-1 text-sm text-gray-500">
                         {{ $destination->localite }}@if ($destination->rue) — {{ $destination->rue }}@endif
                     </p>
@@ -37,10 +37,10 @@
                             <label for="date_visite" class="block text-sm font-medium text-gray-700 mb-1">Date de visite</label>
                             <input id="date_visite" name="date_visite" type="date"
                                    value="{{ \Illuminate\Support\Carbon::parse($visited->pivot->date_visite)->format('Y-m-d') }}"
-                                   class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900 focus:outline-none focus:ring-1">
+                                   class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
                         </div>
                         <button type="submit"
-                                class="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 transition">
+                                class="rounded-md bg-terracotta px-4 py-2 text-sm font-medium text-white hover:bg-terracotta-600 transition">
                             Mettre à jour la date
                         </button>
                     </form>
@@ -60,10 +60,10 @@
                             <label for="date_visite" class="block text-sm font-medium text-gray-700 mb-1">Date de visite</label>
                             <input id="date_visite" name="date_visite" type="date"
                                    value="{{ now()->format('Y-m-d') }}"
-                                   class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900 focus:outline-none focus:ring-1">
+                                   class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
                         </div>
                         <button type="submit"
-                                class="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 transition">
+                                class="rounded-md bg-terracotta px-4 py-2 text-sm font-medium text-white hover:bg-terracotta-600 transition">
                             Marquer comme visité
                         </button>
                     </form>

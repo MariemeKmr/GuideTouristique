@@ -6,7 +6,7 @@
     @include('partials.navbar')
 
     <main class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-        <h1 class="text-2xl font-semibold text-gray-900">Destinations</h1>
+        <h1 class="text-2xl font-semibold text-nuit">Destinations</h1>
         <p class="mt-1 text-sm text-gray-500">Explorez les lieux à visiter.</p>
 
         @include('partials.flash')
@@ -16,7 +16,7 @@
                 <a href="{{ route('visitor.destinations.show', $destination) }}"
                    class="block rounded-lg border border-gray-200 bg-white p-5 hover:border-gray-400 transition">
                     <div class="flex items-start justify-between gap-2">
-                        <h2 class="text-base font-semibold text-gray-900">{{ $destination->name }}</h2>
+                        <h2 class="text-base font-semibold text-nuit">{{ $destination->name }}</h2>
                         @if (in_array($destination->id, $visitedIds))
                             <span class="shrink-0 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 border border-green-200">
                                 Visité

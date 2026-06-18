@@ -14,7 +14,7 @@
         <input id="methode" name="methode" type="text"
                value="{{ old('methode', $transport->methode ?? '') }}" required
                placeholder="Taxi, bus, location de voiture…"
-               class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900 focus:outline-none focus:ring-1">
+               class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
     </div>
 
     <div>
@@ -24,7 +24,7 @@
         <input id="approximation_cout" name="approximation_cout" type="text"
                value="{{ old('approximation_cout', $transport->approximation_cout ?? '') }}"
                placeholder="2 000 FCFA, 5–10 €…"
-               class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900 focus:outline-none focus:ring-1">
+               class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
     </div>
 
     <div>
@@ -32,6 +32,6 @@
             Description <span class="text-gray-400 font-normal">(optionnel)</span>
         </label>
         <textarea id="description" name="description" rows="5"
-                  class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:ring-gray-900 focus:outline-none focus:ring-1">{{ old('description', $transport->description ?? '') }}</textarea>
+                  class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">{{ old('description', $transport->description ?? '') }}</textarea>
     </div>
 </div>

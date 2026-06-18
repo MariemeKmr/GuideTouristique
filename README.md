@@ -1,191 +1,158 @@
 # Guide Touristique
 
-Application Laravel 11 de guide touristique avec trois rôles : **administrateur**, **visiteur** et **chauffeur (taximan)**.
+Application web de guide touristique avec trois espaces (administrateur, visiteur, chauffeur), une charte graphique chaleureuse inspirée du sable et du lagon, et un footer signé sur chaque page.
 
-Application **fonctionnelle de bout en bout** pour les trois rôles : authentification (rôles, redirections), **CRUD administrateur** (destinations, transports), **espace visiteur** (destinations, visites, transports, contact chauffeurs) et **espace chauffeur** (édition du profil public).
+**Laravel 11 · Blade · Tailwind CSS · MySql / MariaDB · Authentification par rôles · Pest**
 
----
+## Aperçu
 
-## 1. Prérequis
+L'application permet de découvrir des destinations, de suivre ses visites et d'entrer en contact avec des chauffeurs. Trois rôles cohabitent : l'**administrateur** gère le catalogue (destinations, transports), le **visiteur** explore et marque ses visites, le **chauffeur** publie un profil que les visiteurs peuvent consulter et appeler. Chaque utilisateur est automatiquement dirigé vers l'espace correspondant à son rôle après connexion.
 
-- PHP **8.2+**
+## Fonctionnalités
+
+**Authentification**
+- Inscription (visiteur ou chauffeur), connexion, déconnexion
+- Rôles administrateur / visiteur / chauffeur et redirection automatique par rôle
+- Protection des espaces par un middleware de rôle
+- Messages de validation en français
+
+**Espace administrateur**
+- CRUD complet des destinations (nom, localité, rue, description)
+- CRUD complet des transports (méthode, coût indicatif, description)
+- Tableau de bord avec compteurs (destinations, transports, chauffeurs, visiteurs)
+
+**Espace visiteur**
+- Exploration des destinations et fiche détaillée
+- Marquage des visites avec date, historique « Mes visites »
+- Consultation des moyens de transport
+- Annuaire des chauffeurs avec contact direct (téléphone, email)
+
+**Espace chauffeur**
+- Édition du profil public : zone, véhicule, tarif indicatif, disponibilité, présentation
+- Récapitulatif sur le tableau de bord, badge Disponible / Indisponible côté visiteur
+
+## Charte graphique
+
+La palette suit une répartition 60 / 30 / 10 / 10 :
+
+| Part | Couleur | Usage |
+|------|---------|-------|
+| 50 % | Sable clair (fond + texture grain) | Dominante, lisibilité et sensation de clarté |
+| 30 % | Bleu lagon | Navigation et surfaces secondaires, climat de confiance |
+| 10 % | Terracotta | Boutons d'action, favoris et notifications uniquement |
+| 10 % | Bleu nuit profond | Texte fort et pied de page |
+
+Le pied de page affiche « Guide Touristique » et « Marième KAMARA » sur toutes les pages.
+
+## Stack technique
+
+| Domaine | Choix |
+|---------|-------|
+| Framework | Laravel 11 |
+| Vues | Blade |
+| Style | Tailwind CSS (via CDN, sans build) |
+| Base de données | MySQL / MariaDB |
+| Identifiants | UUID |
+| Tests | Pest |
+
+## Prérequis
+
+- PHP 8.2 ou plus récent
 - Composer
-- MySQL / MariaDB (XAMPP fonctionne très bien)
-- Node.js *(facultatif — voir la note sur Tailwind plus bas)*
+- MySQL / MariaDB (XAMPP convient)
 
----
-
-## 2. Installation
+## Installation
 
 ```bash
+git clone https://github.com/MariemeKmr/GuideTouristique.git
+cd GuideTouristique
 composer install
-cp .env.example .env        # sous Windows : copy .env.example .env
+```
+
+> Sous Windows, placez le projet hors d'un dossier synchronisé (OneDrive) pour éviter que l'antivirus ne verrouille les fichiers pendant l'installation de Composer.
+
+## Configuration
+
+Créez le fichier `.env` à partir de l'exemple, puis générez la clé d'application :
+
+```bash
+cp .env.example .env
 php artisan key:generate
 ```
 
-Vérifiez la section base de données de votre `.env` (valeurs par défaut prévues pour XAMPP) :
 
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=guide_touristique
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-> Créez la base `guide_touristique` dans phpMyAdmin avant de migrer.
+## Lancement
 
 ```bash
 php artisan migrate --seed
 php artisan serve
 ```
 
-L'application est disponible sur **http://127.0.0.1:8000**.
+L'application est accessible sur l'adresse affichée dans le terminal (par défaut http://127.0.0.1:8000).
 
----
+### Comptes de démonstration
 
-## 3. Comptes de démonstration
+Mot de passe commun : `password`.
 
-Créés automatiquement par le seeder. Mot de passe identique pour tous : `password`.
+| Rôle | Email |
+|------|-------|
+| Admin | admin@guide.test |
+| Visiteur | visiteur@guide.test |
+| Chauffeur | taximan@guide.test |
 
-| Rôle      | Email                  | Mot de passe | Redirigé vers        |
-|-----------|------------------------|--------------|----------------------|
-| Admin     | `admin@guide.test`     | `password`   | `/admin/dashboard`   |
-| Visiteur  | `visiteur@guide.test`  | `password`   | `/visitor/dashboard` |
-| Chauffeur | `taximan@guide.test`   | `password`   | `/taximan/dashboard` |
+## Tests
 
----
-
-## 4. Fonctionnement de l'authentification
-
-### Inscription
-- Champs : prénom, nom, téléphone (optionnel), email, **type de compte** (visiteur ou chauffeur), mot de passe + confirmation.
-- La création d'un compte **administrateur** via le formulaire public est **interdite** (sécurité). Les admins se créent par le seeder ou en base.
-- Après inscription, l'utilisateur est connecté et redirigé vers son tableau de bord.
-
-### Connexion
-- Email + mot de passe, avec option « Se souvenir de moi ».
-- En cas d'échec, message d'erreur en français.
-- Après connexion, redirection vers `/dashboard`, qui **aiguille automatiquement** vers le bon tableau de bord selon le rôle.
-
-### Déconnexion
-- Bouton dans la barre de navigation (requête `POST` protégée par CSRF).
-- Session invalidée et token régénéré.
-
-### Protection par rôle
-Un middleware `role` protège chaque tableau de bord :
-
-```php
-Route::get('/admin/dashboard', [DashboardController::class, 'admin'])
-    ->middleware('role:admin')
-    ->name('admin.dashboard');
-```
-
-On peut autoriser plusieurs rôles : `->middleware('role:admin,taximan')`.
-Un accès non autorisé renvoie une erreur **403**.
-
----
-
-## 4 bis. Gestion administrateur (CRUD)
-
-Connecté en **admin**, vous accédez via la barre de navigation à deux modules :
-
-- **Destinations** (`/admin/destinations`) : nom, localité, rue, description.
-- **Transports** (`/admin/transports`) : méthode, coût approximatif, description.
-
-Chaque module propose la liste paginée, l'ajout, la modification et la suppression (avec confirmation), la validation des champs en français et un message de confirmation après chaque action. Le tableau de bord admin affiche les compteurs (destinations, transports, chauffeurs, visiteurs).
-
-Le seeder insère des **données de démonstration** (12 destinations, 6 transports, contexte sénégalais) pour que les listes ne soient pas vides au premier lancement.
-
----
-
-## 4 ter. Espace visiteur
-
-Connecté en **visiteur**, l'utilisateur dispose de :
-
-- **Destinations** (`/visitor/destinations`) : liste en cartes, page de détail, et marquage « visité » avec une **date de visite** (stockée dans la table pivot `destination_visiteur`). Possibilité de mettre à jour la date ou de retirer la visite.
-- **Mes visites** (`/visitor/mes-visites`) : historique des destinations visitées, triées par date.
-- **Transports** (`/visitor/transports`) : consultation des moyens de déplacement et de leurs coûts.
-- **Chauffeurs** (`/visitor/chauffeurs`) : liste des chauffeurs, profil public et **contact direct** (lien d'appel téléphonique et email).
-
-Le tableau de bord visiteur affiche le nombre de destinations disponibles, de visites effectuées et de chauffeurs.
-
----
-
-## 4 quater. Espace chauffeur
-
-Connecté en **chauffeur (taximan)**, l'utilisateur peut éditer son **profil public** via `/taximan/profil` :
-
-- Coordonnées : prénom, nom, téléphone (mis à jour dans la table `users`).
-- Informations chauffeur (table dédiée `chauffeur_profiles`, relation 1‑1) : zone desservie, véhicule, tarif indicatif, description, et un **interrupteur de disponibilité**.
-
-Ces informations alimentent automatiquement la fiche que voient les visiteurs (liste et profil détaillé), avec un badge **Disponible / Indisponible**. Le tableau de bord chauffeur affiche un récapitulatif du profil.
-
----
-
-## 5. Structure ajoutée / modifiée
-
-```
-app/
-├── Http/
-│   ├── Controllers/
-│   │   ├── Auth/AuthController.php      # login / register / logout
-│   │   ├── Admin/DestinationController.php # CRUD destinations
-│   │   ├── Admin/TransportController.php   # CRUD transports
-│   │   ├── Visitor/VisitorController.php    # destinations, visites, transports, chauffeurs
-│   │   ├── Taximan/TaximanController.php    # édition du profil chauffeur
-│   │   └── DashboardController.php      # aiguillage + stats par rôle
-│   ├── Models/ChauffeurProfile.php      # profil chauffeur (1-1 avec User)
-│   ├── Requests/
-│   │   ├── DestinationRequest.php       # validation destinations
-│   │   └── TransportRequest.php         # validation transports
-│   └── Middleware/
-│       └── RoleMiddleware.php           # contrôle d'accès par rôle
-├── Models/
-│   ├── User.php                         # $fillable corrigé + helpers de rôle + relations
-│   ├── Destination.php                  # $fillable + relation visiteurs
-│   └── Transport.php                    # $fillable + relation visiteurs
-bootstrap/app.php                        # alias du middleware 'role'
-routes/web.php                           # routes guest / auth + protection par rôle
-database/seeders/DatabaseSeeder.php      # comptes de démonstration
-lang/fr/validation.php                   # messages de validation en français
-resources/views/
-├── layouts/{app,guest}.blade.php        # mises en page partagées
-├── partials/navbar.blade.php            # barre + déconnexion
-├── auth/{login,register}.blade.php      # formulaires fonctionnels
-├── admin/destinations/{index,create,edit,_form}.blade.php
-├── admin/transports/{index,create,edit,_form}.blade.php
-├── visitor/destinations/{index,show}.blade.php
-├── visitor/{visits,transports}.blade.php
-├── visitor/drivers/{index,show}.blade.php
-├── taximan/profile.blade.php
-├── dashboards/{admin,visitor,taximan}.blade.php
-└── welcome.blade.php                    # page d'accueil sobre
-```
-
----
-
-## 6. Note sur Tailwind
-
-Les vues utilisent **Tailwind via CDN** pour fonctionner **sans build npm** (idéal en développement).
-
-Pour la production, compilez Tailwind avec Vite (déjà présent) :
+Les tests de fonctionnalités tournent sur une base SQLite en mémoire (aucune configuration supplémentaire).
 
 ```bash
-npm install
-npm run build
+php artisan test
 ```
 
-Remplacez alors la balise CDN par `@vite(['resources/css/app.css', 'resources/js/app.js'])` dans les layouts.
+Couverture : authentification, redirection par rôle et contrôle d'accès, CRUD administrateur, marquage des visites, profil chauffeur.
 
----
+## Structure du projet
 
-## 7. Prochaines étapes prévues
+```
+GuideTouristique/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Auth/AuthController.php          Connexion, inscription, déconnexion
+│   │   │   ├── Admin/DestinationController.php  CRUD destinations
+│   │   │   ├── Admin/TransportController.php    CRUD transports
+│   │   │   ├── Visitor/VisitorController.php    Destinations, visites, chauffeurs
+│   │   │   ├── Taximan/TaximanController.php    Profil chauffeur
+│   │   │   └── DashboardController.php          Aiguillage et statistiques par rôle
+│   │   ├── Middleware/RoleMiddleware.php        Contrôle d'accès par rôle
+│   │   └── Requests/                            Validation (Destination, Transport)
+│   └── Models/                                  User, Destination, Transport, ChauffeurProfile
+├── database/
+│   ├── factories/                               Données de démonstration
+│   ├── migrations/
+│   └── seeders/DatabaseSeeder.php
+├── resources/views/
+│   ├── partials/                                head-assets (thème + grain), navbar, footer, flash
+│   ├── layouts/                                 app, guest
+│   ├── auth/                                     login, register
+│   ├── admin/                                    destinations, transports
+│   ├── visitor/                                  destinations, visits, transports, drivers
+│   ├── taximan/profile.blade.php
+│   ├── dashboards/                               admin, visitor, taximan
+│   └── welcome.blade.php
+├── routes/web.php
+└── tests/Feature/                               Tests Pest
+```
 
-- [x] CRUD des **destinations** (côté admin)
-- [x] CRUD des **transports** (côté admin)
-- [x] Côté visiteur : exploration des destinations, marquage des visites
-- [x] Profil public du chauffeur et mise en relation (contact téléphone / email)
-- [x] Espace chauffeur : édition du profil public (zone, véhicule, tarif, disponibilité)
-- [ ] Gestion des demandes de course (mise en relation transactionnelle)
+## Limites connues
+
+Tailwind est chargé via CDN pour fonctionner sans build npm, ce qui est idéal en développement. Pour la production, il est recommandé de compiler Tailwind avec Vite (déjà présent dans le projet) afin de réduire le poids des pages.
+
+## Auteur
+
+Marième KAMARA
+
+## Licence
+
+Projet personnel à but pédagogique et de démonstration.
+
+© 2026 Guide Touristique - Marième KAMARA. 

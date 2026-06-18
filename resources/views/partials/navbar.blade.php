@@ -1,76 +1,53 @@
-<nav class="bg-white border-b border-gray-200">
+<nav class="relative z-10 bg-lagon text-white shadow-sm">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="flex items-center justify-between h-16">
             <div class="flex items-center gap-8">
-                <a href="{{ route('dashboard') }}" class="text-lg font-semibold text-gray-900">
+                <a href="{{ route('dashboard') }}" class="text-lg font-semibold text-white">
                     Guide Touristique
                 </a>
 
-                {{-- Liens de gestion réservés à l'administrateur --}}
+                @php($link = 'rounded-md px-3 py-1.5 text-sm font-medium transition')
+                @php($active = 'bg-white/20 text-white')
+                @php($idle = 'text-white/80 hover:bg-white/10 hover:text-white')
+
+                {{-- Administrateur --}}
                 @if (auth()->user()->isAdmin())
                     <div class="hidden sm:flex items-center gap-1">
-                        <a href="{{ route('admin.dashboard') }}"
-                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
-                            Tableau de bord
-                        </a>
-                        <a href="{{ route('admin.destinations.index') }}"
-                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('admin.destinations.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
-                            Destinations
-                        </a>
-                        <a href="{{ route('admin.transports.index') }}"
-                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('admin.transports.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
-                            Transports
-                        </a>
+                        <a href="{{ route('admin.dashboard') }}" class="{{ $link }} {{ request()->routeIs('admin.dashboard') ? $active : $idle }}">Tableau de bord</a>
+                        <a href="{{ route('admin.destinations.index') }}" class="{{ $link }} {{ request()->routeIs('admin.destinations.*') ? $active : $idle }}">Destinations</a>
+                        <a href="{{ route('admin.transports.index') }}" class="{{ $link }} {{ request()->routeIs('admin.transports.*') ? $active : $idle }}">Transports</a>
                     </div>
                 @endif
 
-                {{-- Liens réservés au visiteur --}}
+                {{-- Visiteur --}}
                 @if (auth()->user()->isVisiteur())
                     <div class="hidden sm:flex items-center gap-1">
-                        <a href="{{ route('visitor.destinations.index') }}"
-                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('visitor.destinations.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
-                            Destinations
-                        </a>
-                        <a href="{{ route('visitor.visits') }}"
-                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('visitor.visits') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
-                            Mes visites
-                        </a>
-                        <a href="{{ route('visitor.transports.index') }}"
-                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('visitor.transports.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
-                            Transports
-                        </a>
-                        <a href="{{ route('visitor.drivers.index') }}"
-                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('visitor.drivers.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
-                            Chauffeurs
-                        </a>
+                        <a href="{{ route('visitor.destinations.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.destinations.*') ? $active : $idle }}">Destinations</a>
+                        <a href="{{ route('visitor.visits') }}" class="{{ $link }} {{ request()->routeIs('visitor.visits') ? $active : $idle }}">Mes visites</a>
+                        <a href="{{ route('visitor.transports.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.transports.*') ? $active : $idle }}">Transports</a>
+                        <a href="{{ route('visitor.drivers.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.drivers.*') ? $active : $idle }}">Chauffeurs</a>
                     </div>
                 @endif
 
-                {{-- Liens réservés au chauffeur --}}
+                {{-- Chauffeur --}}
                 @if (auth()->user()->isTaximan())
                     <div class="hidden sm:flex items-center gap-1">
-                        <a href="{{ route('taximan.dashboard') }}"
-                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('taximan.dashboard') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
-                            Tableau de bord
-                        </a>
-                        <a href="{{ route('taximan.profile.edit') }}"
-                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('taximan.profile.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
-                            Mon profil
-                        </a>
+                        <a href="{{ route('taximan.dashboard') }}" class="{{ $link }} {{ request()->routeIs('taximan.dashboard') ? $active : $idle }}">Tableau de bord</a>
+                        <a href="{{ route('taximan.profile.edit') }}" class="{{ $link }} {{ request()->routeIs('taximan.profile.*') ? $active : $idle }}">Mon profil</a>
                     </div>
                 @endif
             </div>
 
             <div class="flex items-center gap-4">
                 <div class="text-right leading-tight hidden sm:block">
-                    <div class="text-sm font-medium text-gray-900">{{ auth()->user()->full_name }}</div>
-                    <div class="text-xs text-gray-500 capitalize">{{ auth()->user()->role }}</div>
+                    <div class="text-sm font-medium text-white">{{ auth()->user()->full_name }}</div>
+                    <div class="text-xs text-white/70 capitalize">{{ auth()->user()->role }}</div>
                 </div>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit"
-                            class="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+                            class="rounded-md border border-white/40 px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition">
                         Déconnexion
                     </button>
                 </form>
