@@ -23,6 +23,28 @@
                         </a>
                     </div>
                 @endif
+
+                {{-- Liens réservés au visiteur --}}
+                @if (auth()->user()->isVisiteur())
+                    <div class="hidden sm:flex items-center gap-1">
+                        <a href="{{ route('visitor.destinations.index') }}"
+                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('visitor.destinations.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
+                            Destinations
+                        </a>
+                        <a href="{{ route('visitor.visits') }}"
+                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('visitor.visits') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
+                            Mes visites
+                        </a>
+                        <a href="{{ route('visitor.transports.index') }}"
+                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('visitor.transports.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
+                            Transports
+                        </a>
+                        <a href="{{ route('visitor.drivers.index') }}"
+                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('visitor.drivers.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
+                            Chauffeurs
+                        </a>
+                    </div>
+                @endif
             </div>
 
             <div class="flex items-center gap-4">

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DestinationController;
 use App\Http\Controllers\Admin\TransportController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Visitor\VisitorController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,10 +50,28 @@ Route::middleware('auth')->group(function () {
         Route::resource('transports', TransportController::class)->except('show');
     });
 
-    // --- Espace visiteur ---
-    Route::get('/visitor/dashboard', [DashboardController::class, 'visitor'])
-        ->middleware('role:visiteur')
-        ->name('visitor.dashboard');
+    /*
+    | --- Espace visiteur (préfixe /visitor, noms visitor.*) ---
+    */
+    Route::middleware('role:visiteur')->prefix('visitor')->name('visitor.')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'visitor'])->name('dashboard');
+
+        // Destinations
+        Route::get('/destinations', [VisitorController::class, 'destinations'])->name('destinations.index');
+        Route::get('/destinations/{destination}', [VisitorController::class, 'showDestination'])->name('destinations.show');
+        Route::post('/destinations/{destination}/visite', [VisitorController::class, 'markVisited'])->name('destinations.visit');
+        Route::delete('/destinations/{destination}/visite', [VisitorController::class, 'unmarkVisited'])->name('destinations.unvisit');
+
+        // Mes visites
+        Route::get('/mes-visites', [VisitorController::class, 'myVisits'])->name('visits');
+
+        // Transports
+        Route::get('/transports', [VisitorController::class, 'transports'])->name('transports.index');
+
+        // Chauffeurs
+        Route::get('/chauffeurs', [VisitorController::class, 'drivers'])->name('drivers.index');
+        Route::get('/chauffeurs/{user}', [VisitorController::class, 'showDriver'])->name('drivers.show');
+    });
 
     // --- Espace chauffeur ---
     Route::get('/taximan/dashboard', [DashboardController::class, 'taximan'])

@@ -33,7 +33,15 @@ class DashboardController extends Controller
 
     public function visitor(): View
     {
-        return view('dashboards.visitor');
+        $user = auth()->user();
+
+        $stats = [
+            'destinations' => Destination::count(),
+            'mes_visites'  => $user->destinations()->count(),
+            'chauffeurs'   => User::where('role', User::ROLE_TAXIMAN)->count(),
+        ];
+
+        return view('dashboards.visitor', compact('stats'));
     }
 
     public function taximan(): View

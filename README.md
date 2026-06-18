@@ -2,7 +2,7 @@
 
 Application Laravel 11 de guide touristique avec trois rôles : **administrateur**, **visiteur** et **chauffeur (taximan)**.
 
-Ce dépôt contient un **système d'authentification complet** (connexion, inscription, déconnexion, rôles, redirections) ainsi que le **CRUD administrateur des destinations et des transports**.
+Ce dépôt contient un **système d'authentification complet** (rôles, redirections), le **CRUD administrateur** (destinations, transports) et l'**espace visiteur** (exploration des destinations, suivi des visites, consultation des transports, mise en relation avec les chauffeurs).
 
 ---
 
@@ -100,6 +100,19 @@ Le seeder insère des **données de démonstration** (12 destinations, 6 transpo
 
 ---
 
+## 4 ter. Espace visiteur
+
+Connecté en **visiteur**, l'utilisateur dispose de :
+
+- **Destinations** (`/visitor/destinations`) : liste en cartes, page de détail, et marquage « visité » avec une **date de visite** (stockée dans la table pivot `destination_visiteur`). Possibilité de mettre à jour la date ou de retirer la visite.
+- **Mes visites** (`/visitor/mes-visites`) : historique des destinations visitées, triées par date.
+- **Transports** (`/visitor/transports`) : consultation des moyens de déplacement et de leurs coûts.
+- **Chauffeurs** (`/visitor/chauffeurs`) : liste des chauffeurs, profil public et **contact direct** (lien d'appel téléphonique et email).
+
+Le tableau de bord visiteur affiche le nombre de destinations disponibles, de visites effectuées et de chauffeurs.
+
+---
+
 ## 5. Structure ajoutée / modifiée
 
 ```
@@ -109,7 +122,8 @@ app/
 │   │   ├── Auth/AuthController.php      # login / register / logout
 │   │   ├── Admin/DestinationController.php # CRUD destinations
 │   │   ├── Admin/TransportController.php   # CRUD transports
-│   │   └── DashboardController.php      # aiguillage + stats admin
+│   │   ├── Visitor/VisitorController.php    # destinations, visites, transports, chauffeurs
+│   │   └── DashboardController.php      # aiguillage + stats admin/visiteur
 │   ├── Requests/
 │   │   ├── DestinationRequest.php       # validation destinations
 │   │   └── TransportRequest.php         # validation transports
@@ -129,6 +143,9 @@ resources/views/
 ├── auth/{login,register}.blade.php      # formulaires fonctionnels
 ├── admin/destinations/{index,create,edit,_form}.blade.php
 ├── admin/transports/{index,create,edit,_form}.blade.php
+├── visitor/destinations/{index,show}.blade.php
+├── visitor/{visits,transports}.blade.php
+├── visitor/drivers/{index,show}.blade.php
 ├── dashboards/{admin,visitor,taximan}.blade.php
 └── welcome.blade.php                    # page d'accueil sobre
 ```
@@ -154,5 +171,6 @@ Remplacez alors la balise CDN par `@vite(['resources/css/app.css', 'resources/js
 
 - [x] CRUD des **destinations** (côté admin)
 - [x] CRUD des **transports** (côté admin)
-- [ ] Côté visiteur : exploration des destinations, marquage des visites
-- [ ] Profil public du chauffeur et mise en relation visiteur ↔ chauffeur
+- [x] Côté visiteur : exploration des destinations, marquage des visites
+- [x] Profil public du chauffeur et mise en relation (contact téléphone / email)
+- [ ] Espace chauffeur : édition du profil, gestion des demandes
