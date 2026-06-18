@@ -34,8 +34,8 @@
 
             <div class="mt-6 border-t border-sable-200 pt-6 grid gap-4 sm:grid-cols-2">
                 <div>
-                    <div class="text-xs font-medium uppercase tracking-wider text-gray-400">Téléphone</div>
-                    <div class="mt-1 text-sm text-nuit">{{ $driver->phone ?: 'Non renseigné' }}</div>
+                    <div class="text-xs font-medium uppercase tracking-wider text-gray-400">Contact</div>
+                    <div class="mt-1 text-sm text-nuit">Via la plateforme</div>
                 </div>
                 <div>
                     <div class="text-xs font-medium uppercase tracking-wider text-gray-400">Zone desservie</div>
@@ -51,17 +51,16 @@
                 </div>
             </div>
 
-            <div class="mt-6 flex items-center gap-2">
-                @if ($driver->phone)
-                    <a href="tel:{{ preg_replace('/\s+/', '', $driver->phone) }}"
-                       class="rounded-xl bg-terracotta px-4 py-2 text-sm font-medium text-white hover:bg-terracotta-600">
-                        Appeler
-                    </a>
-                @endif
-                <a href="mailto:{{ $driver->email }}"
-                   class="rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-sable-50">
-                    Envoyer un email
-                </a>
+            <div class="mt-6">
+                @include('partials.flash')
+                <form method="POST" action="{{ route('visitor.drivers.contact', $driver) }}">
+                    @csrf
+                    <button type="submit"
+                            class="rounded-xl bg-terracotta px-5 py-2.5 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 hover:shadow-lift transition">
+                        Contacter ce chauffeur
+                    </button>
+                </form>
+                <p class="mt-2 text-xs text-nuit/50">Le chauffeur recevra une notification sur la plateforme.</p>
             </div>
         </div>
     </main>

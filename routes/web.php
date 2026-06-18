@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
         // Chauffeurs
         Route::get('/chauffeurs', [VisitorController::class, 'drivers'])->name('drivers.index');
         Route::get('/chauffeurs/{user}', [VisitorController::class, 'showDriver'])->name('drivers.show');
+        Route::post('/chauffeurs/{user}/contact', [VisitorController::class, 'contactDriver'])->name('drivers.contact');
     });
 
     /*
@@ -86,5 +87,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'taximan'])->name('dashboard');
         Route::get('/profil', [TaximanController::class, 'editProfile'])->name('profile.edit');
         Route::put('/profil', [TaximanController::class, 'updateProfile'])->name('profile.update');
+        Route::patch('/contacts/{contactRequest}/lue', [TaximanController::class, 'marquerContactLu'])->name('contacts.read');
     });
 });

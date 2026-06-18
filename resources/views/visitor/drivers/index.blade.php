@@ -9,6 +9,8 @@
         <h1 class="text-2xl font-semibold text-nuit">Chauffeurs disponibles</h1>
         <p class="mt-1 text-sm text-gray-500">Consultez les chauffeurs et contactez-les directement.</p>
 
+        @include('partials.flash')
+
         <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($drivers as $driver)
                 @php($profile = $driver->chauffeurProfile)
@@ -39,12 +41,13 @@
                            class="rounded-xl border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-sable-50">
                             Voir le profil
                         </a>
-                        @if ($driver->phone)
-                            <a href="tel:{{ preg_replace('/\s+/', '', $driver->phone) }}"
-                               class="rounded-xl bg-terracotta px-3 py-1.5 text-sm font-medium text-white hover:bg-terracotta-600">
-                                Appeler
-                            </a>
-                        @endif
+                        <form method="POST" action="{{ route('visitor.drivers.contact', $driver) }}">
+                            @csrf
+                            <button type="submit"
+                                    class="rounded-xl bg-terracotta px-3 py-1.5 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">
+                                Contacter
+                            </button>
+                        </form>
                     </div>
                 </div>
             @empty

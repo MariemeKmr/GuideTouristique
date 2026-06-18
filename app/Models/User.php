@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -137,5 +138,17 @@ class User extends Authenticatable
     public function chauffeurProfile(): HasOne
     {
         return $this->hasOne(ChauffeurProfile::class);
+    }
+
+    /** Demandes de contact envoyees par le visiteur. */
+    public function demandesEnvoyees(): HasMany
+    {
+        return $this->hasMany(ContactRequest::class, 'visiteur_id');
+    }
+
+    /** Demandes de contact recues par le chauffeur. */
+    public function demandesRecues(): HasMany
+    {
+        return $this->hasMany(ContactRequest::class, 'chauffeur_id');
     }
 }

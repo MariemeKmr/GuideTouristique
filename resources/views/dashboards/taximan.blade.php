@@ -62,5 +62,53 @@
                 @endif
             </div>
         @endif
+
+        {{-- Demandes de contact recues --}}
+        <div class="mt-6 rounded-2xl border border-sable-200 bg-white shadow-soft p-6">
+            <h2 class="text-sm font-semibold text-nuit">Demandes de contact</h2>
+            <p class="mt-1 text-sm text-nuit/60">Des visiteurs souhaitent vous joindre.</p>
+
+            <div class="mt-4 divide-y divide-sable-200">
+                @forelse ($demandes as $demande)
+                    <div class="flex items-center justify-between gap-3 py-3 {{ $demande->lu ? '' : 'font-medium' }}">
+                        <div class="flex items-center gap-3">
+                            @unless ($demande->lu)
+                                <span class="h-2 w-2 shrink-0 rounded-full bg-terracotta" title="Nouvelle"></span>
+                            @else
+                                <span class="h-2 w-2 shrink-0 rounded-full bg-sable-300"></span>
+                            @endunless
+                            <div>
+                                <div class="text-sm text-nuit">{{ $demande->visiteur->full_name }}</div>
+                                <div class="text-xs text-nuit/50">
+                                    {{ $demande->visiteur->phone ?: 'Telephone non renseigne' }}
+                                    · {{ $demande->created_at->format('d/m/Y H:i') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            @if ($demande->visiteur->phone)
+                                <a href="tel:{{ preg_replace('/\s+/', '', $demande->visiteur->phone) }}"
+                                   class="rounded-xl bg-terracotta px-3 py-1.5 text-xs font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">
+                                    Appeler
+                                </a>
+                            @endif
+                            @unless ($demande->lu)
+                                <form method="POST" action="{{ route('taximan.contacts.read', $demande) }}">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit"
+                                            class="rounded-xl border border-sable-300 px-3 py-1.5 text-xs font-medium text-nuit/70 hover:bg-sable-50">
+                                        Marquer comme lue
+                                    </button>
+                                </form>
+                            @endunless
+                        </div>
+                    </div>
+                @empty
+                    <p class="py-6 text-center text-sm text-nuit/50">Aucune demande de contact pour le moment.</p>
+                @endforelse
+            </div>
+        </div>
     </main>
 @endsection

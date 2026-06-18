@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Visitor;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activite;
+use App\Models\ContactRequest;
 use App\Models\Destination;
 use App\Models\Transport;
 use App\Models\User;
@@ -128,6 +129,18 @@ class VisitorController extends Controller
         $user->load('chauffeurProfile');
 
         return view('visitor.drivers.show', ['driver' => $user]);
+    }
+
+    public function contactDriver(Request $request, User $user): RedirectResponse
+    {
+        abort_unless($user->isTaximan(), 404);
+
+        ContactRequest::create([
+            'visiteur_id'  => $request->user()->id,
+            'chauffeur_id' => $user->id,
+        ]);
+
+        return back()->with('success', 'Votre demande de contact a ete envoyee au chauffeur.');
     }
 
     /*

@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
         |--------------------------------------------------------------------
         */
         $destinations = [
-            ['name' => 'Ile de Goree', 'localite' => 'Goree', 'rue' => null,
+            ['name' => 'Ile de Goree', 'localite' => 'Dakar', 'rue' => null,
              'description' => "A 20 minutes de chaloupe de Dakar, ile pietonne classee par l'UNESCO. A voir absolument: la Maison des Esclaves, pour comprendre l'histoire de la traite negriere."],
             ['name' => 'Monument de la Renaissance Africaine', 'localite' => 'Dakar', 'rue' => 'Ouakam',
              'description' => "Statue en bronze de 52 metres dominant Ouakam. Vue panoramique exceptionnelle sur toute la presqu'ile."],
@@ -58,11 +58,11 @@ class DatabaseSeeder extends Seeder
              'description' => "Marche aux poissons et village artisanal. Ideal pour l'energie locale, les tissus et l'artisanat."],
             ['name' => 'Marche Kermel', 'localite' => 'Dakar', 'rue' => 'Plateau',
              'description' => "Marche historique et sa magnifique halle ronde, au coeur du Plateau."],
-            ['name' => 'Lac Rose (Lac Retba)', 'localite' => 'Lac Rose', 'rue' => null,
+            ['name' => 'Lac Rose (Lac Retba)', 'localite' => 'Lac Rose', 'rue' => 'Tivaouane Peulh-Niague',
              'description' => "Lac aux reflets roses selon la saison. Terrain de jeu pour le quad, le buggy, le cheval, le chameau et le kayak transparent dans les dunes."],
-            ['name' => 'Reserve de Bandia', 'localite' => 'Bandia', 'rue' => null,
+            ['name' => 'Reserve de Bandia', 'localite' => 'Bandia', 'rue' => 'Route de Mbour, Sindia',
              'description' => "Safari a moins de 2h de Dakar: rhinoceros, girafes, zebres, antilopes et majestueux baobabs."],
-            ['name' => 'La Somone', 'localite' => 'Somone', 'rue' => null,
+            ['name' => 'La Somone', 'localite' => 'Mbour', 'rue' => null,
              'description' => "Village cotier calme de la Petite Cote, lagune et belles plages pour une ambiance decontractee."],
             ['name' => 'Popenguine', 'localite' => 'Popenguine', 'rue' => null,
              'description' => "Village cotier paisible de la Petite Cote, reserve naturelle et plages tranquilles."],
