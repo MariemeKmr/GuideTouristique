@@ -8,25 +8,46 @@
     <main class="max-w-2xl mx-auto px-4 sm:px-6 py-10">
         <a href="{{ route('visitor.drivers.index') }}" class="text-sm text-gray-500 hover:text-gray-900">&larr; Tous les chauffeurs</a>
 
+        @php($profile = $driver->chauffeurProfile)
+
         <div class="mt-4 rounded-lg border border-gray-200 bg-white p-6">
-            <div class="flex items-center gap-4">
-                <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-lg font-semibold text-gray-700">
-                    {{ strtoupper(substr($driver->first_name, 0, 1) . substr($driver->last_name, 0, 1)) }}
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-lg font-semibold text-gray-700">
+                        {{ strtoupper(substr($driver->first_name, 0, 1) . substr($driver->last_name, 0, 1)) }}
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-semibold text-gray-900">{{ $driver->full_name }}</h1>
+                        <p class="text-sm text-gray-500">Chauffeur</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-2xl font-semibold text-gray-900">{{ $driver->full_name }}</h1>
-                    <p class="text-sm text-gray-500">Chauffeur</p>
-                </div>
+                @if ($profile && $profile->disponible)
+                    <span class="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 border border-green-200">Disponible</span>
+                @elseif ($profile && ! $profile->disponible)
+                    <span class="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 border border-gray-200">Indisponible</span>
+                @endif
             </div>
 
-            <div class="mt-6 border-t border-gray-200 pt-6 space-y-3">
+            @if ($profile && $profile->bio)
+                <p class="mt-4 text-sm text-gray-700 whitespace-pre-line">{{ $profile->bio }}</p>
+            @endif
+
+            <div class="mt-6 border-t border-gray-200 pt-6 grid gap-4 sm:grid-cols-2">
                 <div>
                     <div class="text-xs font-medium uppercase tracking-wider text-gray-400">Téléphone</div>
                     <div class="mt-1 text-sm text-gray-900">{{ $driver->phone ?: 'Non renseigné' }}</div>
                 </div>
                 <div>
-                    <div class="text-xs font-medium uppercase tracking-wider text-gray-400">Email</div>
-                    <div class="mt-1 text-sm text-gray-900">{{ $driver->email }}</div>
+                    <div class="text-xs font-medium uppercase tracking-wider text-gray-400">Zone desservie</div>
+                    <div class="mt-1 text-sm text-gray-900">{{ $profile?->zone ?: 'Non renseignée' }}</div>
+                </div>
+                <div>
+                    <div class="text-xs font-medium uppercase tracking-wider text-gray-400">Véhicule</div>
+                    <div class="mt-1 text-sm text-gray-900">{{ $profile?->vehicule ?: 'Non renseigné' }}</div>
+                </div>
+                <div>
+                    <div class="text-xs font-medium uppercase tracking-wider text-gray-400">Tarif indicatif</div>
+                    <div class="mt-1 text-sm text-gray-900">{{ $profile?->tarif_indicatif ?: 'Non renseigné' }}</div>
                 </div>
             </div>
 

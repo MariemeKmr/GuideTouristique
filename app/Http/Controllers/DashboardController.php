@@ -46,6 +46,8 @@ class DashboardController extends Controller
 
     public function taximan(): View
     {
-        return view('dashboards.taximan');
+        $profile = auth()->user()->chauffeurProfile;
+
+        return view('dashboards.taximan', compact('profile'));
     }
 }

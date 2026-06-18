@@ -11,16 +11,28 @@
 
         <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($drivers as $driver)
+                @php($profile = $driver->chauffeurProfile)
                 <div class="rounded-lg border border-gray-200 bg-white p-5">
-                    <div class="flex items-center gap-3">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700">
-                            {{ strtoupper(substr($driver->first_name, 0, 1) . substr($driver->last_name, 0, 1)) }}
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-center gap-3">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700">
+                                {{ strtoupper(substr($driver->first_name, 0, 1) . substr($driver->last_name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <h2 class="text-base font-semibold text-gray-900">{{ $driver->full_name }}</h2>
+                                <p class="text-xs text-gray-500">{{ $profile?->zone ?: 'Zone non renseignée' }}</p>
+                            </div>
                         </div>
-                        <div>
-                            <h2 class="text-base font-semibold text-gray-900">{{ $driver->full_name }}</h2>
-                            <p class="text-xs text-gray-500">Chauffeur</p>
-                        </div>
+                        @if ($profile && $profile->disponible)
+                            <span class="shrink-0 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 border border-green-200">Disponible</span>
+                        @elseif ($profile && ! $profile->disponible)
+                            <span class="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 border border-gray-200">Indisponible</span>
+                        @endif
                     </div>
+
+                    @if ($profile && $profile->tarif_indicatif)
+                        <p class="mt-3 text-sm text-gray-600">Tarif indicatif : {{ $profile->tarif_indicatif }}</p>
+                    @endif
 
                     <div class="mt-4 flex items-center gap-2">
                         <a href="{{ route('visitor.drivers.show', $driver) }}"

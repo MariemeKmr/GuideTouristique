@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DestinationController;
 use App\Http\Controllers\Admin\TransportController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Taximan\TaximanController;
 use App\Http\Controllers\Visitor\VisitorController;
 use Illuminate\Support\Facades\Route;
 
@@ -73,8 +74,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/chauffeurs/{user}', [VisitorController::class, 'showDriver'])->name('drivers.show');
     });
 
-    // --- Espace chauffeur ---
-    Route::get('/taximan/dashboard', [DashboardController::class, 'taximan'])
-        ->middleware('role:taximan')
-        ->name('taximan.dashboard');
+    /*
+    | --- Espace chauffeur (préfixe /taximan, noms taximan.*) ---
+    */
+    Route::middleware('role:taximan')->prefix('taximan')->name('taximan.')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'taximan'])->name('dashboard');
+        Route::get('/profil', [TaximanController::class, 'editProfile'])->name('profile.edit');
+        Route::put('/profil', [TaximanController::class, 'updateProfile'])->name('profile.update');
+    });
 });

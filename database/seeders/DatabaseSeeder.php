@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ChauffeurProfile;
 use App\Models\Destination;
 use App\Models\Transport;
 use App\Models\User;
@@ -56,5 +57,13 @@ class DatabaseSeeder extends Seeder
         // --- Données de démonstration ---
         Destination::factory(12)->create();
         Transport::factory(6)->create();
+
+        // --- Profils chauffeurs pour tous les utilisateurs 'taximan' ---
+        User::where('role', User::ROLE_TAXIMAN)->get()->each(function (User $taximan) {
+            ChauffeurProfile::firstOrCreate(
+                ['user_id' => $taximan->id],
+                ChauffeurProfile::factory()->make()->getAttributes()
+            );
+        });
     }
 }

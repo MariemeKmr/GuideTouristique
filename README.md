@@ -2,7 +2,7 @@
 
 Application Laravel 11 de guide touristique avec trois rôles : **administrateur**, **visiteur** et **chauffeur (taximan)**.
 
-Ce dépôt contient un **système d'authentification complet** (rôles, redirections), le **CRUD administrateur** (destinations, transports) et l'**espace visiteur** (exploration des destinations, suivi des visites, consultation des transports, mise en relation avec les chauffeurs).
+Application **fonctionnelle de bout en bout** pour les trois rôles : authentification (rôles, redirections), **CRUD administrateur** (destinations, transports), **espace visiteur** (destinations, visites, transports, contact chauffeurs) et **espace chauffeur** (édition du profil public).
 
 ---
 
@@ -113,6 +113,17 @@ Le tableau de bord visiteur affiche le nombre de destinations disponibles, de vi
 
 ---
 
+## 4 quater. Espace chauffeur
+
+Connecté en **chauffeur (taximan)**, l'utilisateur peut éditer son **profil public** via `/taximan/profil` :
+
+- Coordonnées : prénom, nom, téléphone (mis à jour dans la table `users`).
+- Informations chauffeur (table dédiée `chauffeur_profiles`, relation 1‑1) : zone desservie, véhicule, tarif indicatif, description, et un **interrupteur de disponibilité**.
+
+Ces informations alimentent automatiquement la fiche que voient les visiteurs (liste et profil détaillé), avec un badge **Disponible / Indisponible**. Le tableau de bord chauffeur affiche un récapitulatif du profil.
+
+---
+
 ## 5. Structure ajoutée / modifiée
 
 ```
@@ -123,7 +134,9 @@ app/
 │   │   ├── Admin/DestinationController.php # CRUD destinations
 │   │   ├── Admin/TransportController.php   # CRUD transports
 │   │   ├── Visitor/VisitorController.php    # destinations, visites, transports, chauffeurs
-│   │   └── DashboardController.php      # aiguillage + stats admin/visiteur
+│   │   ├── Taximan/TaximanController.php    # édition du profil chauffeur
+│   │   └── DashboardController.php      # aiguillage + stats par rôle
+│   ├── Models/ChauffeurProfile.php      # profil chauffeur (1-1 avec User)
 │   ├── Requests/
 │   │   ├── DestinationRequest.php       # validation destinations
 │   │   └── TransportRequest.php         # validation transports
@@ -146,6 +159,7 @@ resources/views/
 ├── visitor/destinations/{index,show}.blade.php
 ├── visitor/{visits,transports}.blade.php
 ├── visitor/drivers/{index,show}.blade.php
+├── taximan/profile.blade.php
 ├── dashboards/{admin,visitor,taximan}.blade.php
 └── welcome.blade.php                    # page d'accueil sobre
 ```
@@ -173,4 +187,5 @@ Remplacez alors la balise CDN par `@vite(['resources/css/app.css', 'resources/js
 - [x] CRUD des **transports** (côté admin)
 - [x] Côté visiteur : exploration des destinations, marquage des visites
 - [x] Profil public du chauffeur et mise en relation (contact téléphone / email)
-- [ ] Espace chauffeur : édition du profil, gestion des demandes
+- [x] Espace chauffeur : édition du profil public (zone, véhicule, tarif, disponibilité)
+- [ ] Gestion des demandes de course (mise en relation transactionnelle)

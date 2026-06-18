@@ -45,6 +45,20 @@
                         </a>
                     </div>
                 @endif
+
+                {{-- Liens réservés au chauffeur --}}
+                @if (auth()->user()->isTaximan())
+                    <div class="hidden sm:flex items-center gap-1">
+                        <a href="{{ route('taximan.dashboard') }}"
+                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('taximan.dashboard') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
+                            Tableau de bord
+                        </a>
+                        <a href="{{ route('taximan.profile.edit') }}"
+                           class="rounded-md px-3 py-1.5 text-sm font-medium {{ request()->routeIs('taximan.profile.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50' }}">
+                            Mon profil
+                        </a>
+                    </div>
+                @endif
             </div>
 
             <div class="flex items-center gap-4">

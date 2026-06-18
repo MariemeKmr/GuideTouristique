@@ -112,6 +112,7 @@ class VisitorController extends Controller
     public function drivers(): View
     {
         $drivers = User::where('role', User::ROLE_TAXIMAN)
+            ->with('chauffeurProfile')
             ->orderBy('first_name')
             ->paginate(12);
 
@@ -122,6 +123,8 @@ class VisitorController extends Controller
     {
         // On ne montre que les profils de chauffeurs.
         abort_unless($user->isTaximan(), 404);
+
+        $user->load('chauffeurProfile');
 
         return view('visitor.drivers.show', ['driver' => $user]);
     }

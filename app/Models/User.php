@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -128,5 +129,13 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Transport::class, 'transport_visiteur')
             ->withTimestamps();
+    }
+
+    /**
+     * Profil de chauffeur (uniquement pour les utilisateurs de rôle 'taximan').
+     */
+    public function chauffeurProfile(): HasOne
+    {
+        return $this->hasOne(ChauffeurProfile::class);
     }
 }
