@@ -8,7 +8,7 @@
 
     {{-- Erreurs de validation globales --}}
     @if ($errors->any())
-        <div class="mb-4 rounded-md bg-red-50 border border-red-200 px-4 py-3">
+        <div class="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3">
             <ul class="text-sm text-red-700 list-disc list-inside space-y-1">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -26,7 +26,7 @@
             </label>
             <input id="email" name="email" type="email" value="{{ old('email') }}"
                    required autofocus autocomplete="email"
-                   class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
+                   class="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
         </div>
 
         <div>
@@ -34,7 +34,7 @@
                 Mot de passe
             </label>
             <input id="password" name="password" type="password" required autocomplete="current-password"
-                   class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
+                   class="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
         </div>
 
         <div class="flex items-center">
@@ -44,7 +44,7 @@
         </div>
 
         <button type="submit"
-                class="w-full rounded-md bg-terracotta px-4 py-2 text-sm font-medium text-white hover:bg-terracotta-600 transition">
+                class="w-full rounded-xl bg-terracotta px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 hover:shadow-lift transition">
             Se connecter
         </button>
     </form>

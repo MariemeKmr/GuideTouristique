@@ -11,7 +11,7 @@
 
         @include('partials.flash')
 
-        <div class="mt-8 overflow-hidden rounded-lg border border-gray-200 bg-white">
+        <div class="mt-8 overflow-hidden rounded-2xl border border-sable-200 bg-white shadow-soft">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-sable-50">
                     <tr>
@@ -27,7 +27,7 @@
                             <td class="px-4 py-3 text-sm font-medium text-nuit">{{ $visit->name }}</td>
                             <td class="px-4 py-3 text-sm text-gray-600">{{ $visit->localite }}</td>
                             <td class="px-4 py-3 text-sm text-gray-600">
-                                {{ $visit->pivot->date_visite ? \Illuminate\Support\Carbon::parse($visit->pivot->date_visite)->format('d/m/Y') : '—' }}
+                                {{ $visit->pivot->date_visite ? \Illuminate\Support\Carbon::parse($visit->pivot->date_visite)->format('d/m/Y') : '-' }}
                             </td>
                             <td class="px-4 py-3 text-right text-sm">
                                 <a href="{{ route('visitor.destinations.show', $visit) }}"

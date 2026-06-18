@@ -12,14 +12,14 @@
                 <p class="mt-1 text-sm text-gray-500">{{ $transports->total() }} moyen(s) de transport enregistré(s).</p>
             </div>
             <a href="{{ route('admin.transports.create') }}"
-               class="rounded-md bg-terracotta px-4 py-2 text-sm font-medium text-white hover:bg-terracotta-600 transition">
+               class="rounded-xl bg-terracotta px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 hover:shadow-lift transition">
                 Ajouter
             </a>
         </div>
 
         @include('partials.flash')
 
-        <div class="overflow-hidden rounded-lg border border-gray-200 bg-white">
+        <div class="overflow-hidden rounded-2xl border border-sable-200 bg-white shadow-soft">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-sable-50">
                     <tr>
@@ -32,11 +32,11 @@
                     @forelse ($transports as $transport)
                         <tr>
                             <td class="px-4 py-3 text-sm font-medium text-nuit">{{ $transport->methode }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-600">{{ $transport->approximation_cout ?: '—' }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">{{ $transport->approximation_cout ?: '-' }}</td>
                             <td class="px-4 py-3 text-right text-sm">
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route('admin.transports.edit', $transport) }}"
-                                       class="rounded-md border border-gray-300 px-3 py-1.5 font-medium text-gray-700 hover:bg-sable-50">
+                                       class="rounded-xl border border-gray-300 px-3 py-1.5 font-medium text-gray-700 hover:bg-sable-50">
                                         Modifier
                                     </a>
                                     <form method="POST" action="{{ route('admin.transports.destroy', $transport) }}"
@@ -44,7 +44,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                                class="rounded-md border border-red-200 px-3 py-1.5 font-medium text-red-700 hover:bg-red-50">
+                                                class="rounded-xl border border-red-200 px-3 py-1.5 font-medium text-red-700 hover:bg-red-50">
                                             Supprimer
                                         </button>
                                     </form>

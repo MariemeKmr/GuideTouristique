@@ -14,7 +14,7 @@ class ChauffeurProfileFactory extends Factory
 
     public function definition(): array
     {
-        $zones = ['Dakar — Plateau', 'Almadies', 'Yoff', 'Ouakam', 'Parcelles Assainies', 'Rufisque'];
+        $zones = ['Dakar - Plateau', 'Almadies', 'Yoff', 'Ouakam', 'Parcelles Assainies', 'Rufisque'];
         $vehicules = ['Toyota Corolla blanche', 'Hyundai Accent grise', 'Peugeot 301 noire', 'Renault Logan beige'];
 
         return [

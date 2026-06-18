@@ -31,18 +31,7 @@ L'application permet de découvrir des destinations, de suivre ses visites et d'
 - Édition du profil public : zone, véhicule, tarif indicatif, disponibilité, présentation
 - Récapitulatif sur le tableau de bord, badge Disponible / Indisponible côté visiteur
 
-## Charte graphique
 
-La palette suit une répartition 60 / 30 / 10 / 10 :
-
-| Part | Couleur | Usage |
-|------|---------|-------|
-| 50 % | Sable clair (fond + texture grain) | Dominante, lisibilité et sensation de clarté |
-| 30 % | Bleu lagon | Navigation et surfaces secondaires, climat de confiance |
-| 10 % | Terracotta | Boutons d'action, favoris et notifications uniquement |
-| 10 % | Bleu nuit profond | Texte fort et pied de page |
-
-Le pied de page affiche « Guide Touristique » et « Marième KAMARA » sur toutes les pages.
 
 ## Stack technique
 
@@ -80,6 +69,16 @@ cp .env.example .env
 php artisan key:generate
 ```
 
+Vérifiez la section base de données (valeurs prévues pour XAMPP) :
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=guide_touristique
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
 ## Lancement
 
@@ -155,4 +154,4 @@ Marième KAMARA
 
 Projet personnel à but pédagogique et de démonstration.
 
-© 2026 Guide Touristique - Marième KAMARA. 
+© 2026 Guide Touristique - Marième KAMARA. Ce projet enrichit mon portfolio.

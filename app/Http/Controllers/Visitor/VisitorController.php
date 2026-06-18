@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Visitor;
 
 use App\Http\Controllers\Controller;
+use App\Models\Activite;
 use App\Models\Destination;
 use App\Models\Transport;
 use App\Models\User;
@@ -127,5 +128,28 @@ class VisitorController extends Controller
         $user->load('chauffeurProfile');
 
         return view('visitor.drivers.show', ['driver' => $user]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Activites (consultation, filtre par categorie)
+    |--------------------------------------------------------------------------
+    */
+
+    public function activites(Request $request): View
+    {
+        $categorie = $request->query('categorie');
+
+        $activites = Activite::with('destination')
+            ->when($categorie, fn ($q) => $q->where('categorie', $categorie))
+            ->orderBy('nom')
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('visitor.activites.index', [
+            'activites'  => $activites,
+            'categories' => Activite::CATEGORIES,
+            'courante'   => $categorie,
+        ]);
     }
 }

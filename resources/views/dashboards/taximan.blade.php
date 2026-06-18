@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tableau de bord — Chauffeur')
+@section('title', 'Tableau de bord - Chauffeur')
 
 @section('content')
     @include('partials.navbar')
@@ -12,7 +12,7 @@
                 <p class="mt-1 text-sm text-gray-500">Bonjour {{ auth()->user()->first_name }}.</p>
             </div>
             <a href="{{ route('taximan.profile.edit') }}"
-               class="rounded-md bg-terracotta px-4 py-2 text-sm font-medium text-white hover:bg-terracotta-600 transition">
+               class="rounded-xl bg-terracotta px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 hover:shadow-lift transition">
                 Modifier mon profil
             </a>
         </div>
@@ -20,18 +20,18 @@
         @include('partials.flash')
 
         @if (! $profile)
-            <div class="mt-8 rounded-lg border border-amber-200 bg-amber-50 p-5 text-sm text-amber-800">
+            <div class="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-800">
                 Votre profil n'est pas encore complété. Les visiteurs voient peu d'informations sur vous.
                 <a href="{{ route('taximan.profile.edit') }}" class="font-medium underline">Compléter mon profil</a>.
             </div>
         @else
-            <div class="mt-8 rounded-lg border border-gray-200 bg-white p-6">
+            <div class="mt-8 rounded-2xl border border-sable-200 bg-white shadow-soft p-6">
                 <div class="flex items-center justify-between">
                     <h2 class="text-sm font-semibold text-nuit">Mon profil public</h2>
                     @if ($profile->disponible)
                         <span class="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 border border-green-200">Disponible</span>
                     @else
-                        <span class="rounded-full bg-sable-50 px-3 py-1 text-xs font-medium text-gray-600 border border-gray-200">Indisponible</span>
+                        <span class="rounded-full bg-sable-50 px-3 py-1 text-xs font-medium text-gray-600 border border-sable-200">Indisponible</span>
                     @endif
                 </div>
 

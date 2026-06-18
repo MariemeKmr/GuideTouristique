@@ -12,7 +12,7 @@
         <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($drivers as $driver)
                 @php($profile = $driver->chauffeurProfile)
-                <div class="rounded-lg border border-gray-200 bg-white p-5">
+                <div class="rounded-2xl border border-sable-200 bg-white shadow-soft p-5">
                     <div class="flex items-start justify-between gap-2">
                         <div class="flex items-center gap-3">
                             <div class="flex h-10 w-10 items-center justify-center rounded-full bg-sable-50 text-sm font-semibold text-gray-700">
@@ -26,7 +26,7 @@
                         @if ($profile && $profile->disponible)
                             <span class="shrink-0 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 border border-green-200">Disponible</span>
                         @elseif ($profile && ! $profile->disponible)
-                            <span class="shrink-0 rounded-full bg-sable-50 px-2 py-0.5 text-xs font-medium text-gray-600 border border-gray-200">Indisponible</span>
+                            <span class="shrink-0 rounded-full bg-sable-50 px-2 py-0.5 text-xs font-medium text-gray-600 border border-sable-200">Indisponible</span>
                         @endif
                     </div>
 
@@ -36,19 +36,19 @@
 
                     <div class="mt-4 flex items-center gap-2">
                         <a href="{{ route('visitor.drivers.show', $driver) }}"
-                           class="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-sable-50">
+                           class="rounded-xl border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-sable-50">
                             Voir le profil
                         </a>
                         @if ($driver->phone)
                             <a href="tel:{{ preg_replace('/\s+/', '', $driver->phone) }}"
-                               class="rounded-md bg-terracotta px-3 py-1.5 text-sm font-medium text-white hover:bg-terracotta-600">
+                               class="rounded-xl bg-terracotta px-3 py-1.5 text-sm font-medium text-white hover:bg-terracotta-600">
                                 Appeler
                             </a>
                         @endif
                     </div>
                 </div>
             @empty
-                <div class="col-span-full rounded-lg border border-gray-200 bg-white p-10 text-center text-sm text-gray-500">
+                <div class="col-span-full rounded-2xl border border-sable-200 bg-white shadow-soft p-10 text-center text-sm text-gray-500">
                     Aucun chauffeur inscrit pour le moment.
                 </div>
             @endforelse

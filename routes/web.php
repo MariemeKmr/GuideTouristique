@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActiviteController;
 use App\Http\Controllers\Admin\DestinationController;
 use App\Http\Controllers\Admin\TransportController;
 use App\Http\Controllers\Auth\AuthController;
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('destinations', DestinationController::class)->except('show');
         Route::resource('transports', TransportController::class)->except('show');
+        Route::resource('activites', ActiviteController::class)->except('show');
     });
 
     /*
@@ -68,6 +70,9 @@ Route::middleware('auth')->group(function () {
 
         // Transports
         Route::get('/transports', [VisitorController::class, 'transports'])->name('transports.index');
+
+        // Activites
+        Route::get('/activites', [VisitorController::class, 'activites'])->name('activites.index');
 
         // Chauffeurs
         Route::get('/chauffeurs', [VisitorController::class, 'drivers'])->name('drivers.index');

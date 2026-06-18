@@ -11,7 +11,7 @@
 
         <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($transports as $transport)
-                <div class="rounded-lg border border-gray-200 bg-white p-5">
+                <div class="rounded-2xl border border-sable-200 bg-white shadow-soft p-5">
                     <div class="flex items-center justify-between gap-2">
                         <h2 class="text-base font-semibold text-nuit">{{ $transport->methode }}</h2>
                         @if ($transport->approximation_cout)
@@ -25,7 +25,7 @@
                     @endif
                 </div>
             @empty
-                <div class="col-span-full rounded-lg border border-gray-200 bg-white p-10 text-center text-sm text-gray-500">
+                <div class="col-span-full rounded-2xl border border-sable-200 bg-white shadow-soft p-10 text-center text-sm text-gray-500">
                     Aucun transport renseigné pour le moment.
                 </div>
             @endforelse
