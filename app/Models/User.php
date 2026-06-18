@@ -151,4 +151,30 @@ class User extends Authenticatable
     {
         return $this->hasMany(ContactRequest::class, 'chauffeur_id');
     }
+
+    /** Courses demandees par le visiteur. */
+    public function coursesVisiteur(): HasMany
+    {
+        return $this->hasMany(Course::class, 'visiteur_id');
+    }
+
+    /** Courses assurees par le chauffeur. */
+    public function coursesChauffeur(): HasMany
+    {
+        return $this->hasMany(Course::class, 'chauffeur_id');
+    }
+
+    /** Note moyenne du chauffeur (1 a 5), ou null si aucune note. */
+    public function noteMoyenne(): ?float
+    {
+        $moyenne = $this->coursesChauffeur()->whereNotNull('note')->avg('note');
+
+        return $moyenne ? round((float) $moyenne, 1) : null;
+    }
+
+    /** Nombre d'avis recus par le chauffeur. */
+    public function nombreAvis(): int
+    {
+        return $this->coursesChauffeur()->whereNotNull('note')->count();
+    }
 }

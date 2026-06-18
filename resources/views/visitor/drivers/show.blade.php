@@ -18,7 +18,11 @@
                     </div>
                     <div>
                         <h1 class="text-2xl font-semibold text-nuit">{{ $driver->full_name }}</h1>
-                        <p class="text-sm text-gray-500">Chauffeur</p>
+                        <p class="text-sm text-gray-500">Chauffeur
+                            @if ($driver->noteMoyenne())
+                                <span class="text-nuit">&middot; <span class="font-medium">{{ $driver->noteMoyenne() }}/5</span> <span class="text-nuit/40">({{ $driver->nombreAvis() }} avis)</span></span>
+                            @endif
+                        </p>
                     </div>
                 </div>
                 @if ($profile && $profile->disponible)
@@ -61,6 +65,23 @@
                     </button>
                 </form>
                 <p class="mt-2 text-xs text-nuit/50">Le chauffeur recevra une notification sur la plateforme.</p>
+            </div>
+
+            <div class="mt-6 border-t border-sable-200 pt-6">
+                <p class="text-sm font-medium text-nuit">Reserver une course</p>
+                <form method="POST" action="{{ route('visitor.courses.store', $driver) }}" class="mt-3 space-y-3">
+                    @csrf
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <input name="depart" type="text" placeholder="Lieu de depart"
+                               class="w-full rounded-xl border border-sable-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
+                        <input name="destination" type="text" placeholder="Destination"
+                               class="w-full rounded-xl border border-sable-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
+                    </div>
+                    <button type="submit"
+                            class="rounded-xl border border-lagon px-5 py-2.5 text-sm font-semibold text-lagon-700 hover:bg-lagon-50 transition">
+                        Demander une course
+                    </button>
+                </form>
             </div>
         </div>
     </main>

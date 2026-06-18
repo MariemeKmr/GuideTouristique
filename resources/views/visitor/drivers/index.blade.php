@@ -22,7 +22,12 @@
                             </div>
                             <div>
                                 <h2 class="text-base font-semibold text-nuit">{{ $driver->full_name }}</h2>
-                                <p class="text-xs text-gray-500">{{ $profile?->zone ?: 'Zone non renseignée' }}</p>
+                                <p class="text-xs text-gray-500">
+                                    {{ $profile?->zone ?: 'Zone non renseignée' }}
+                                    @if ($driver->noteMoyenne())
+                                        <span class="text-nuit/70">&middot; {{ $driver->noteMoyenne() }}/5</span>
+                                    @endif
+                                </p>
                             </div>
                         </div>
                         @if ($profile && $profile->disponible)

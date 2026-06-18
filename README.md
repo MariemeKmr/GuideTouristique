@@ -1,6 +1,6 @@
 # Guide Touristique
 
-Application web de guide touristique avec trois espaces (administrateur, visiteur, chauffeur), une charte graphique chaleureuse inspirée du sable et du lagon, et un footer signé sur chaque page.
+Application web de guide touristique avec trois espaces (administrateur, visiteur, chauffeur).
 
 **Laravel 11 · Blade · Tailwind CSS · MySql / MariaDB · Authentification par rôles · Pest**
 
@@ -25,13 +25,14 @@ L'application permet de découvrir des destinations, de suivre ses visites et d'
 - Exploration des destinations et fiche détaillée
 - Marquage des visites avec date, historique « Mes visites »
 - Consultation des moyens de transport
-- Annuaire des chauffeurs avec contact direct (téléphone, email)
+- Annuaire des chauffeurs avec contact via la plateforme (notification au chauffeur)
+- Réservation d'une course, suivi du statut et notation du chauffeur
 
 **Espace chauffeur**
 - Édition du profil public : zone, véhicule, tarif indicatif, disponibilité, présentation
 - Récapitulatif sur le tableau de bord, badge Disponible / Indisponible côté visiteur
-
-
+- Gestion des courses : accepter, faire évoluer le statut (en route, arrivé, en course, terminée)
+- Demandes de contact reçues et note moyenne calculée à partir des courses
 
 ## Stack technique
 
@@ -69,17 +70,6 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Vérifiez la section base de données (valeurs prévues pour XAMPP) :
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=guide_touristique
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
 ## Lancement
 
 ```bash
@@ -91,13 +81,15 @@ L'application est accessible sur l'adresse affichée dans le terminal (par défa
 
 ### Comptes de démonstration
 
-Mot de passe commun : `password`.
+Données fictives de test, créées par le seeder. Le mot de passe est `password` pour tous les comptes.
 
-| Rôle | Email |
-|------|-------|
-| Admin | admin@guide.test |
-| Visiteur | visiteur@guide.test |
-| Chauffeur | taximan@guide.test |
+| Rôle | Nom | Email |
+|------|-----|-------|
+| Administrateur | Admin Principal | admin@guide.test |
+| Visiteur | Awa Diop | visiteur@guide.test |
+| Chauffeur | Moussa Fall | taximan@guide.test |
+
+Le seeder génère aussi d'autres comptes fictifs (visiteurs, chauffeurs, administrateurs) avec des adresses du type `nom@example.com`, accessibles eux aussi avec le mot de passe `password`. Toutes ces données sont fictives et destinées uniquement aux tests.
 
 ## Tests
 
@@ -117,25 +109,24 @@ GuideTouristique/
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── Auth/AuthController.php          Connexion, inscription, déconnexion
-│   │   │   ├── Admin/DestinationController.php  CRUD destinations
-│   │   │   ├── Admin/TransportController.php    CRUD transports
-│   │   │   ├── Visitor/VisitorController.php    Destinations, visites, chauffeurs
-│   │   │   ├── Taximan/TaximanController.php    Profil chauffeur
+│   │   │   ├── Admin/                           CRUD destinations, transports, activités
+│   │   │   ├── Visitor/                         Destinations, visites, chauffeurs, courses
+│   │   │   ├── Taximan/                         Profil chauffeur, courses
 │   │   │   └── DashboardController.php          Aiguillage et statistiques par rôle
 │   │   ├── Middleware/RoleMiddleware.php        Contrôle d'accès par rôle
-│   │   └── Requests/                            Validation (Destination, Transport)
-│   └── Models/                                  User, Destination, Transport, ChauffeurProfile
+│   │   └── Requests/                            Validation des formulaires
+│   └── Models/                                  User, Destination, Transport, Activite, ChauffeurProfile, ContactRequest, Course
 ├── database/
 │   ├── factories/                               Données de démonstration
 │   ├── migrations/
 │   └── seeders/DatabaseSeeder.php
 ├── resources/views/
-│   ├── partials/                                head-assets (thème + grain), navbar, footer, flash
+│   ├── partials/                                navbar, footer, flash, pagination
 │   ├── layouts/                                 app, guest
 │   ├── auth/                                     login, register
-│   ├── admin/                                    destinations, transports
-│   ├── visitor/                                  destinations, visits, transports, drivers
-│   ├── taximan/profile.blade.php
+│   ├── admin/                                    destinations, transports, activités
+│   ├── visitor/                                  destinations, visites, transports, chauffeurs, courses
+│   ├── taximan/                                  profil, courses
 │   ├── dashboards/                               admin, visitor, taximan
 │   └── welcome.blade.php
 ├── routes/web.php

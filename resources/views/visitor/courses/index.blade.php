@@ -1,0 +1,88 @@
+@extends('layouts.app')
+
+@section('title', 'Mes courses')
+
+@section('content')
+    @include('partials.navbar')
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+        <h1 class="text-2xl font-semibold text-nuit">Mes courses</h1>
+        <p class="mt-1 text-sm text-nuit/60">Suivez vos trajets et notez vos chauffeurs.</p>
+
+        @include('partials.flash')
+
+        <div class="mt-8 space-y-4">
+            @forelse ($courses as $course)
+                <div class="rounded-2xl border border-sable-200 bg-white shadow-soft p-5">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                            <div class="text-sm font-semibold text-nuit">{{ $course->chauffeur->full_name }}</div>
+                            <div class="mt-0.5 text-sm text-nuit/60">
+                                {{ $course->depart ?: 'Depart non precise' }} &rarr; {{ $course->destination ?: 'Destination non precisee' }}
+                            </div>
+                            <div class="mt-1 text-xs text-nuit/40">{{ $course->created_at->format('d/m/Y H:i') }}</div>
+                        </div>
+                        @include('partials.course-statut')
+                    </div>
+
+                    {{-- Actions selon le statut --}}
+                    <div class="mt-4 flex flex-wrap items-center gap-2">
+                        @if ($course->statut === 'arrive')
+                            <form method="POST" action="{{ route('visitor.courses.start', $course) }}">
+                                @csrf @method('PATCH')
+                                <button class="rounded-xl bg-terracotta px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">Demarrer la course</button>
+                            </form>
+                        @endif
+
+                        @if (in_array($course->statut, ['demandee', 'acceptee', 'en_route', 'arrive']))
+                            <form method="POST" action="{{ route('visitor.courses.cancel', $course) }}" onsubmit="return confirm('Annuler cette course ?');">
+                                @csrf @method('PATCH')
+                                <button class="rounded-xl border border-sable-300 px-4 py-2 text-sm font-medium text-nuit/70 hover:bg-sable-50 transition">Annuler</button>
+                            </form>
+                        @endif
+
+                        @if ($course->statut === 'en_course')
+                            <span class="text-sm text-nuit/50">Course en cours...</span>
+                        @endif
+                    </div>
+
+                    {{-- Notation --}}
+                    @if ($course->peutEtreNotee())
+                        <form method="POST" action="{{ route('visitor.courses.rate', $course) }}" class="mt-4 border-t border-sable-200 pt-4">
+                            @csrf @method('PATCH')
+                            <p class="text-sm font-medium text-nuit">Noter ce chauffeur</p>
+                            <div class="mt-2 flex flex-wrap items-end gap-3">
+                                <div>
+                                    <label for="note-{{ $course->id }}" class="block text-xs text-nuit/60 mb-1">Note</label>
+                                    <select id="note-{{ $course->id }}" name="note" required
+                                            class="rounded-xl border border-sable-300 px-3 py-2 text-sm bg-white focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
+                                        @for ($i = 5; $i >= 1; $i--)
+                                            <option value="{{ $i }}">{{ $i }} / 5</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                                <div class="flex-1 min-w-[12rem]">
+                                    <label for="com-{{ $course->id }}" class="block text-xs text-nuit/60 mb-1">Commentaire (optionnel)</label>
+                                    <input id="com-{{ $course->id }}" name="commentaire" type="text"
+                                           class="w-full rounded-xl border border-sable-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
+                                </div>
+                                <button class="rounded-xl bg-terracotta px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">Envoyer</button>
+                            </div>
+                        </form>
+                    @elseif ($course->statut === 'terminee' && $course->note)
+                        <div class="mt-4 border-t border-sable-200 pt-4 text-sm text-nuit/70">
+                            Votre note : <span class="font-semibold text-nuit">{{ $course->note }} / 5</span>
+                            @if ($course->commentaire) <span class="text-nuit/50">- {{ $course->commentaire }}</span> @endif
+                        </div>
+                    @endif
+                </div>
+            @empty
+                <div class="rounded-2xl border border-sable-200 bg-white shadow-soft p-10 text-center text-sm text-nuit/50">
+                    Aucune course pour le moment. Reservez-en une depuis la fiche d'un chauffeur.
+                </div>
+            @endforelse
+        </div>
+
+        <div class="mt-6">{{ $courses->links() }}</div>
+    </main>
+@endsection

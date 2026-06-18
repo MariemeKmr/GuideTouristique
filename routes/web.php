@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\TransportController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Taximan\TaximanController;
+use App\Http\Controllers\Taximan\CourseController as TaximanCourseController;
+use App\Http\Controllers\Visitor\CourseController as VisitorCourseController;
 use App\Http\Controllers\Visitor\VisitorController;
 use Illuminate\Support\Facades\Route;
 
@@ -78,6 +80,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/chauffeurs', [VisitorController::class, 'drivers'])->name('drivers.index');
         Route::get('/chauffeurs/{user}', [VisitorController::class, 'showDriver'])->name('drivers.show');
         Route::post('/chauffeurs/{user}/contact', [VisitorController::class, 'contactDriver'])->name('drivers.contact');
+
+        // Courses
+        Route::get('/mes-courses', [VisitorCourseController::class, 'index'])->name('courses.index');
+        Route::post('/chauffeurs/{user}/course', [VisitorCourseController::class, 'store'])->name('courses.store');
+        Route::patch('/courses/{course}/demarrer', [VisitorCourseController::class, 'demarrer'])->name('courses.start');
+        Route::patch('/courses/{course}/annuler', [VisitorCourseController::class, 'annuler'])->name('courses.cancel');
+        Route::patch('/courses/{course}/noter', [VisitorCourseController::class, 'noter'])->name('courses.rate');
     });
 
     /*
@@ -88,5 +97,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/profil', [TaximanController::class, 'editProfile'])->name('profile.edit');
         Route::put('/profil', [TaximanController::class, 'updateProfile'])->name('profile.update');
         Route::patch('/contacts/{contactRequest}/lue', [TaximanController::class, 'marquerContactLu'])->name('contacts.read');
+
+        // Courses
+        Route::get('/mes-courses', [TaximanCourseController::class, 'index'])->name('courses.index');
+        Route::patch('/courses/{course}/accepter', [TaximanCourseController::class, 'accepter'])->name('courses.accept');
+        Route::patch('/courses/{course}/refuser', [TaximanCourseController::class, 'refuser'])->name('courses.refuse');
+        Route::patch('/courses/{course}/avancer', [TaximanCourseController::class, 'avancer'])->name('courses.advance');
     });
 });
