@@ -1,0 +1,30 @@
+@extends('layouts.app')
+
+@section('title', 'Nouveau transport')
+
+@section('content')
+    @include('partials.navbar')
+
+    <main class="max-w-2xl mx-auto px-4 sm:px-6 py-10">
+        <a href="{{ route('admin.transports.index') }}" class="text-sm text-gray-500 hover:text-gray-900">&larr; Retour</a>
+        <h1 class="mt-2 text-2xl font-semibold text-gray-900 mb-6">Nouveau transport</h1>
+
+        <div class="rounded-lg border border-gray-200 bg-white p-6">
+            <form method="POST" action="{{ route('admin.transports.store') }}">
+                @csrf
+                @include('admin.transports._form')
+
+                <div class="mt-6 flex items-center gap-3">
+                    <button type="submit"
+                            class="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 transition">
+                        Enregistrer
+                    </button>
+                    <a href="{{ route('admin.transports.index') }}"
+                       class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+@endsection

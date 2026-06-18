@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Destination;
+use App\Models\Transport;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -50,5 +52,9 @@ class DatabaseSeeder extends Seeder
 
         // --- Quelques utilisateurs aléatoires (facultatif) ---
         User::factory(10)->create();
+
+        // --- Données de démonstration ---
+        Destination::factory(12)->create();
+        Transport::factory(6)->create();
     }
 }

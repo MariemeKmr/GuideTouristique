@@ -2,7 +2,7 @@
 
 Application Laravel 11 de guide touristique avec trois rôles : **administrateur**, **visiteur** et **chauffeur (taximan)**.
 
-Ce dépôt contient désormais un **système d'authentification complet** (connexion, inscription, déconnexion, gestion des rôles et redirections). Le CRUD des destinations et des transports viendra dans une étape suivante.
+Ce dépôt contient un **système d'authentification complet** (connexion, inscription, déconnexion, rôles, redirections) ainsi que le **CRUD administrateur des destinations et des transports**.
 
 ---
 
@@ -87,6 +87,19 @@ Un accès non autorisé renvoie une erreur **403**.
 
 ---
 
+## 4 bis. Gestion administrateur (CRUD)
+
+Connecté en **admin**, vous accédez via la barre de navigation à deux modules :
+
+- **Destinations** (`/admin/destinations`) : nom, localité, rue, description.
+- **Transports** (`/admin/transports`) : méthode, coût approximatif, description.
+
+Chaque module propose la liste paginée, l'ajout, la modification et la suppression (avec confirmation), la validation des champs en français et un message de confirmation après chaque action. Le tableau de bord admin affiche les compteurs (destinations, transports, chauffeurs, visiteurs).
+
+Le seeder insère des **données de démonstration** (12 destinations, 6 transports, contexte sénégalais) pour que les listes ne soient pas vides au premier lancement.
+
+---
+
 ## 5. Structure ajoutée / modifiée
 
 ```
@@ -94,7 +107,12 @@ app/
 ├── Http/
 │   ├── Controllers/
 │   │   ├── Auth/AuthController.php      # login / register / logout
-│   │   └── DashboardController.php      # aiguillage + vues par rôle
+│   │   ├── Admin/DestinationController.php # CRUD destinations
+│   │   ├── Admin/TransportController.php   # CRUD transports
+│   │   └── DashboardController.php      # aiguillage + stats admin
+│   ├── Requests/
+│   │   ├── DestinationRequest.php       # validation destinations
+│   │   └── TransportRequest.php         # validation transports
 │   └── Middleware/
 │       └── RoleMiddleware.php           # contrôle d'accès par rôle
 ├── Models/
@@ -109,6 +127,8 @@ resources/views/
 ├── layouts/{app,guest}.blade.php        # mises en page partagées
 ├── partials/navbar.blade.php            # barre + déconnexion
 ├── auth/{login,register}.blade.php      # formulaires fonctionnels
+├── admin/destinations/{index,create,edit,_form}.blade.php
+├── admin/transports/{index,create,edit,_form}.blade.php
 ├── dashboards/{admin,visitor,taximan}.blade.php
 └── welcome.blade.php                    # page d'accueil sobre
 ```
@@ -132,7 +152,7 @@ Remplacez alors la balise CDN par `@vite(['resources/css/app.css', 'resources/js
 
 ## 7. Prochaines étapes prévues
 
-- CRUD des **destinations** (côté admin)
-- CRUD des **transports** (côté admin)
-- Côté visiteur : exploration des destinations, marquage des visites, recherche d'un chauffeur
-- Profil public du chauffeur et mise en relation
+- [x] CRUD des **destinations** (côté admin)
+- [x] CRUD des **transports** (côté admin)
+- [ ] Côté visiteur : exploration des destinations, marquage des visites
+- [ ] Profil public du chauffeur et mise en relation visiteur ↔ chauffeur

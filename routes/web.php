@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\DestinationController;
+use App\Http\Controllers\Admin\TransportController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -37,15 +39,22 @@ Route::middleware('auth')->group(function () {
     // Aiguilleur : redirige vers le bon dashboard selon le rôle.
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Tableaux de bord protégés par rôle.
-    Route::get('/admin/dashboard', [DashboardController::class, 'admin'])
-        ->middleware('role:admin')
-        ->name('admin.dashboard');
+    /*
+    | --- Espace administrateur (préfixe /admin, noms admin.*) ---
+    */
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
 
+        Route::resource('destinations', DestinationController::class)->except('show');
+        Route::resource('transports', TransportController::class)->except('show');
+    });
+
+    // --- Espace visiteur ---
     Route::get('/visitor/dashboard', [DashboardController::class, 'visitor'])
         ->middleware('role:visiteur')
         ->name('visitor.dashboard');
 
+    // --- Espace chauffeur ---
     Route::get('/taximan/dashboard', [DashboardController::class, 'taximan'])
         ->middleware('role:taximan')
         ->name('taximan.dashboard');

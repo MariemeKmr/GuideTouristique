@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Destination;
+use App\Models\Transport;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -18,7 +21,14 @@ class DashboardController extends Controller
 
     public function admin(): View
     {
-        return view('dashboards.admin');
+        $stats = [
+            'destinations' => Destination::count(),
+            'transports'   => Transport::count(),
+            'taximen'      => User::where('role', User::ROLE_TAXIMAN)->count(),
+            'visiteurs'    => User::where('role', User::ROLE_VISITEUR)->count(),
+        ];
+
+        return view('dashboards.admin', compact('stats'));
     }
 
     public function visitor(): View
