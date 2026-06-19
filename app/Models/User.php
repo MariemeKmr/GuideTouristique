@@ -158,6 +158,12 @@ class User extends Authenticatable
         return $this->hasMany(Course::class, 'visiteur_id');
     }
 
+    /** Activites reservees par le visiteur. */
+    public function reservationsActivites(): HasMany
+    {
+        return $this->hasMany(ActiviteReservation::class, 'visiteur_id');
+    }
+
     /** Courses assurees par le chauffeur. */
     public function coursesChauffeur(): HasMany
     {

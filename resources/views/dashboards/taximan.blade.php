@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tableau de bord - Chauffeur')
+@section('title', 'Tableau de bord — Chauffeur')
 
 @section('content')
     @include('partials.navbar')
@@ -83,6 +83,9 @@
                                     {{ $demande->visiteur->phone ?: 'Telephone non renseigne' }}
                                     · {{ $demande->created_at->format('d/m/Y H:i') }}
                                 </div>
+                                @if ($demande->message)
+                                    <div class="mt-0.5 text-xs text-nuit/60">{{ $demande->message }}</div>
+                                @endif
                             </div>
                         </div>
 

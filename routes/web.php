@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ObjetPerduController;
 use App\Http\Controllers\Taximan\TaximanController;
+use App\Http\Controllers\Taximan\ClientController as TaximanClientController;
 use App\Http\Controllers\Taximan\CourseController as TaximanCourseController;
 use App\Http\Controllers\Visitor\CourseController as VisitorCourseController;
 use App\Http\Controllers\Visitor\VisitorController;
@@ -80,6 +81,8 @@ Route::middleware('auth')->group(function () {
 
         // Activites
         Route::get('/activites', [VisitorController::class, 'activites'])->name('activites.index');
+        Route::post('/activites/reserver', [VisitorController::class, 'reserverActivite'])->name('activites.reserve');
+        Route::post('/mes-activites/{reservation}/contacter', [VisitorController::class, 'contacterChauffeurActivite'])->name('activites.contact');
 
         // Chauffeurs
         Route::get('/chauffeurs', [VisitorController::class, 'drivers'])->name('drivers.index');
@@ -108,5 +111,8 @@ Route::middleware('auth')->group(function () {
         Route::patch('/courses/{course}/accepter', [TaximanCourseController::class, 'accepter'])->name('courses.accept');
         Route::patch('/courses/{course}/refuser', [TaximanCourseController::class, 'refuser'])->name('courses.refuse');
         Route::patch('/courses/{course}/avancer', [TaximanCourseController::class, 'avancer'])->name('courses.advance');
+
+        // Historique des clients
+        Route::get('/clients', [TaximanClientController::class, 'index'])->name('clients.index');
     });
 });

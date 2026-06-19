@@ -6,25 +6,30 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ContactRequest extends Model
+class ActiviteReservation extends Model
 {
     use HasUuids;
 
     protected $fillable = [
         'visiteur_id',
+        'activite_id',
+        'date_activite',
         'chauffeur_id',
-        'message',
-        'lu',
     ];
 
     protected function casts(): array
     {
-        return ['lu' => 'boolean'];
+        return ['date_activite' => 'date'];
     }
 
     public function visiteur(): BelongsTo
     {
         return $this->belongsTo(User::class, 'visiteur_id');
+    }
+
+    public function activite(): BelongsTo
+    {
+        return $this->belongsTo(Activite::class);
     }
 
     public function chauffeur(): BelongsTo
