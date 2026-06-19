@@ -36,13 +36,18 @@
                                 <button class="rounded-xl border border-sable-300 px-4 py-2 text-sm font-medium text-nuit/70 hover:bg-sable-50 transition">Refuser</button>
                             </form>
                         @elseif ($course->statut === 'terminee')
-                            <span class="text-sm text-nuit/60">
-                                @if ($course->note) Note recue : <span class="font-semibold text-nuit">{{ $course->note }} / 5</span> @else En attente de la note du client. @endif
-                            </span>
+                            <span class="text-sm text-nuit/50">Course terminee.</span>
                         @elseif ($course->statut === 'annulee')
-                            <span class="text-sm text-nuit/40">Course annulee.</span>
+                            @if ($course->annulee_par === 'client')
+                                <span class="inline-flex items-center gap-2 rounded-xl border border-terracotta/30 bg-terracotta/10 px-3 py-1.5 text-sm font-medium text-terracotta-700">
+                                    <span class="h-2 w-2 rounded-full bg-terracotta"></span>
+                                    Le client a refuse le demarrage : course annulee.
+                                </span>
+                            @else
+                                <span class="text-sm text-nuit/40">Course annulee.</span>
+                            @endif
                         @else
-                            {{-- Course active : coordonner par telephone + faire avancer le statut --}}
+                            {{-- Course active : coordonner par telephone --}}
                             @if ($course->visiteur->phone)
                                 <a href="tel:{{ preg_replace('/\s+/', '', $course->visiteur->phone) }}"
                                    class="rounded-xl border border-lagon px-4 py-2 text-sm font-semibold text-lagon-700 hover:bg-lagon-50 transition">
@@ -50,20 +55,20 @@
                                 </a>
                             @endif
 
-                            <form method="POST" action="{{ route('taximan.courses.advance', $course) }}">
-                                @csrf @method('PATCH')
-                                <button class="rounded-xl bg-terracotta px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">
-                                    @switch($course->statut)
-                                        @case('acceptee') Demarrer le trajet (en route) @break
-                                        @case('en_route') Je suis arrive @break
-                                        @case('arrive') Demarrer la course @break
-                                        @case('en_course') Terminer la course @break
-                                    @endswitch
-                                </button>
-                            </form>
-
-                            @if ($course->statut === 'arrive')
-                                <span class="text-xs text-nuit/40">Le client peut aussi demarrer de son cote.</span>
+                            @if ($course->statut === 'attente_client')
+                                <span class="text-sm text-nuit/50">En attente de la confirmation du client.</span>
+                            @else
+                                <form method="POST" action="{{ route('taximan.courses.advance', $course) }}">
+                                    @csrf @method('PATCH')
+                                    <button class="rounded-xl bg-terracotta px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">
+                                        @switch($course->statut)
+                                            @case('acceptee') Demarrer le trajet (en route) @break
+                                            @case('en_route') Je suis arrive @break
+                                            @case('arrive') Demarrer la course @break
+                                            @case('en_course') Terminer la course @break
+                                        @endswitch
+                                    </button>
+                                </form>
                             @endif
                         @endif
                     </div>

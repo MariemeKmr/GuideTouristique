@@ -16,6 +16,7 @@ class Course extends Model
         'acceptee'  => 'Acceptee',
         'en_route'  => 'En route',
         'arrive'    => 'Arrive',
+        'attente_client' => 'Attente du client',
         'en_course' => 'En course',
         'terminee'  => 'Terminee',
         'annulee'   => 'Annulee',
@@ -27,13 +28,15 @@ class Course extends Model
         'depart',
         'destination',
         'statut',
+        'annulee_par',
+        'alerte_chauffeur',
         'note',
         'commentaire',
     ];
 
     protected function casts(): array
     {
-        return ['note' => 'integer'];
+        return ['note' => 'integer', 'alerte_chauffeur' => 'boolean'];
     }
 
     public function visiteur(): BelongsTo

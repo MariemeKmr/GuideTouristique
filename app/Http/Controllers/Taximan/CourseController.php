@@ -20,8 +20,12 @@ class CourseController extends Controller
 
     public function index(Request $request): View
     {
-        $courses = $request->user()
-            ->coursesChauffeur()
+        $user = $request->user();
+
+        // Consulter la liste acquitte les alertes (courses refusees par un client).
+        $user->coursesChauffeur()->where('alerte_chauffeur', true)->update(['alerte_chauffeur' => false]);
+
+        $courses = $user->coursesChauffeur()
             ->with('visiteur')
             ->latest()
             ->paginate(10);

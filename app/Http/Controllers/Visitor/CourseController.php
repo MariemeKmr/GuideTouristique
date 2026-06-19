@@ -47,14 +47,28 @@ class CourseController extends Controller
             ->with('success', 'Votre demande de course a ete envoyee au chauffeur.');
     }
 
-    public function demarrer(Request $request, Course $course): RedirectResponse
+    public function confirmer(Request $request, Course $course): RedirectResponse
     {
         $this->autoriseVisiteur($request, $course);
-        abort_unless($course->statut === 'arrive', 403);
+        abort_unless($course->statut === 'attente_client', 403);
 
-        $course->update(['statut' => 'en_course']);
+        $data = $request->validate([
+            'reponse' => ['required', 'in:oui,non'],
+        ]);
 
-        return back()->with('success', 'Course demarree. Bon trajet !');
+        if ($data['reponse'] === 'oui') {
+            $course->update(['statut' => 'en_course']);
+
+            return back()->with('success', 'Course demarree. Bon trajet !');
+        }
+
+        $course->update([
+            'statut'           => 'annulee',
+            'annulee_par'      => 'client',
+            'alerte_chauffeur' => true,
+        ]);
+
+        return back()->with('success', 'Course annulee.');
     }
 
     public function annuler(Request $request, Course $course): RedirectResponse

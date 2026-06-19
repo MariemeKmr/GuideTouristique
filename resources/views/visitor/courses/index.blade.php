@@ -26,25 +26,36 @@
                     </div>
 
                     {{-- Actions selon le statut --}}
-                    <div class="mt-4 flex flex-wrap items-center gap-2">
-                        @if ($course->statut === 'arrive')
-                            <form method="POST" action="{{ route('visitor.courses.start', $course) }}">
-                                @csrf @method('PATCH')
-                                <button class="rounded-xl bg-terracotta px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">Demarrer la course</button>
-                            </form>
-                        @endif
+                    @if ($course->statut === 'attente_client')
+                        <div class="mt-4 rounded-xl border border-terracotta/20 bg-terracotta/5 p-4">
+                            <p class="text-sm font-medium text-nuit">Le chauffeur est pret a demarrer la course. Confirmez-vous ?</p>
+                            <div class="mt-3 flex flex-wrap items-center gap-2">
+                                <form method="POST" action="{{ route('visitor.courses.confirm', $course) }}">
+                                    @csrf @method('PATCH')
+                                    <input type="hidden" name="reponse" value="oui">
+                                    <button class="rounded-xl bg-terracotta px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">Oui, demarrer</button>
+                                </form>
+                                <form method="POST" action="{{ route('visitor.courses.confirm', $course) }}" onsubmit="return confirm('Refuser et annuler la course ?');">
+                                    @csrf @method('PATCH')
+                                    <input type="hidden" name="reponse" value="non">
+                                    <button class="rounded-xl border border-sable-300 px-4 py-2 text-sm font-medium text-nuit/70 hover:bg-sable-50 transition">Non, annuler</button>
+                                </form>
+                            </div>
+                        </div>
+                    @else
+                        <div class="mt-4 flex flex-wrap items-center gap-2">
+                            @if (in_array($course->statut, ['demandee', 'acceptee', 'en_route', 'arrive']))
+                                <form method="POST" action="{{ route('visitor.courses.cancel', $course) }}" onsubmit="return confirm('Annuler cette course ?');">
+                                    @csrf @method('PATCH')
+                                    <button class="rounded-xl border border-sable-300 px-4 py-2 text-sm font-medium text-nuit/70 hover:bg-sable-50 transition">Annuler</button>
+                                </form>
+                            @endif
 
-                        @if (in_array($course->statut, ['demandee', 'acceptee', 'en_route', 'arrive']))
-                            <form method="POST" action="{{ route('visitor.courses.cancel', $course) }}" onsubmit="return confirm('Annuler cette course ?');">
-                                @csrf @method('PATCH')
-                                <button class="rounded-xl border border-sable-300 px-4 py-2 text-sm font-medium text-nuit/70 hover:bg-sable-50 transition">Annuler</button>
-                            </form>
-                        @endif
-
-                        @if ($course->statut === 'en_course')
-                            <span class="text-sm text-nuit/50">Course en cours...</span>
-                        @endif
-                    </div>
+                            @if ($course->statut === 'en_course')
+                                <span class="text-sm text-nuit/50">Course en cours...</span>
+                            @endif
+                        </div>
+                    @endif
 
                     {{-- Notation --}}
                     @if ($course->peutEtreNotee())

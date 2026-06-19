@@ -84,7 +84,7 @@ Route::middleware('auth')->group(function () {
         // Courses
         Route::get('/mes-courses', [VisitorCourseController::class, 'index'])->name('courses.index');
         Route::post('/chauffeurs/{user}/course', [VisitorCourseController::class, 'store'])->name('courses.store');
-        Route::patch('/courses/{course}/demarrer', [VisitorCourseController::class, 'demarrer'])->name('courses.start');
+        Route::patch('/courses/{course}/confirmer', [VisitorCourseController::class, 'confirmer'])->name('courses.confirm');
         Route::patch('/courses/{course}/annuler', [VisitorCourseController::class, 'annuler'])->name('courses.cancel');
         Route::patch('/courses/{course}/noter', [VisitorCourseController::class, 'noter'])->name('courses.rate');
     });

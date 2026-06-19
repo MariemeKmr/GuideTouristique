@@ -27,11 +27,13 @@
                         <a href="{{ route('visitor.transports.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.transports.*') ? $active : $idle }}">Transports</a>
                         <a href="{{ route('visitor.activites.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.activites.*') ? $active : $idle }}">Activites</a>
                         <a href="{{ route('visitor.drivers.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.drivers.*') ? $active : $idle }}">Chauffeurs</a>
+                        @php($aConfirmer = auth()->user()->coursesVisiteur()->where('statut', 'attente_client')->count())
                         @php($aNoter = auth()->user()->coursesVisiteur()->where('statut', 'terminee')->whereNull('note')->count())
+                        @php($badgeVisiteur = $aConfirmer + $aNoter)
                         <a href="{{ route('visitor.courses.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.courses.*') ? $active : $idle }}">
                             Mes courses
-                            @if ($aNoter > 0)
-                                <span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $aNoter }}</span>
+                            @if ($badgeVisiteur > 0)
+                                <span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $badgeVisiteur }}</span>
                             @endif
                         </a>
                     </div>
@@ -48,10 +50,12 @@
                         </a>
                         <a href="{{ route('taximan.profile.edit') }}" class="{{ $link }} {{ request()->routeIs('taximan.profile.*') ? $active : $idle }}">Mon profil</a>
                         @php($enAttente = auth()->user()->coursesChauffeur()->where('statut', 'demandee')->count())
+                        @php($alertes = auth()->user()->coursesChauffeur()->where('alerte_chauffeur', true)->count())
+                        @php($badgeChauffeur = $enAttente + $alertes)
                         <a href="{{ route('taximan.courses.index') }}" class="{{ $link }} {{ request()->routeIs('taximan.courses.*') ? $active : $idle }}">
                             Mes courses
-                            @if ($enAttente > 0)
-                                <span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $enAttente }}</span>
+                            @if ($badgeChauffeur > 0)
+                                <span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $badgeChauffeur }}</span>
                             @endif
                         </a>
                     </div>
