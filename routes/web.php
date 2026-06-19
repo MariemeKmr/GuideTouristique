@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DestinationController;
 use App\Http\Controllers\Admin\TransportController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ObjetPerduController;
 use App\Http\Controllers\Taximan\TaximanController;
 use App\Http\Controllers\Taximan\CourseController as TaximanCourseController;
 use App\Http\Controllers\Visitor\CourseController as VisitorCourseController;
@@ -43,6 +44,10 @@ Route::middleware('auth')->group(function () {
 
     // Aiguilleur : redirige vers le bon dashboard selon le rôle.
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Objet perdu : fil de discussion anonyme entre le client et le chauffeur d'une course.
+    Route::get('/objets/{course}', [ObjetPerduController::class, 'show'])->name('objets.show');
+    Route::post('/objets/{course}', [ObjetPerduController::class, 'store'])->name('objets.store');
 
     /*
     | --- Espace administrateur (préfixe /admin, noms admin.*) ---

@@ -29,7 +29,7 @@
                         <a href="{{ route('visitor.drivers.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.drivers.*') ? $active : $idle }}">Chauffeurs</a>
                         @php($aConfirmer = auth()->user()->coursesVisiteur()->where('statut', 'attente_client')->count())
                         @php($aNoter = auth()->user()->coursesVisiteur()->where('statut', 'terminee')->whereNull('note')->count())
-                        @php($badgeVisiteur = $aConfirmer + $aNoter)
+                        @php($badgeVisiteur = $aConfirmer + $aNoter + auth()->user()->messagesObjetNonLus())
                         <a href="{{ route('visitor.courses.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.courses.*') ? $active : $idle }}">
                             Mes courses
                             @if ($badgeVisiteur > 0)
@@ -51,7 +51,7 @@
                         <a href="{{ route('taximan.profile.edit') }}" class="{{ $link }} {{ request()->routeIs('taximan.profile.*') ? $active : $idle }}">Mon profil</a>
                         @php($enAttente = auth()->user()->coursesChauffeur()->where('statut', 'demandee')->count())
                         @php($alertes = auth()->user()->coursesChauffeur()->where('alerte_chauffeur', true)->count())
-                        @php($badgeChauffeur = $enAttente + $alertes)
+                        @php($badgeChauffeur = $enAttente + $alertes + auth()->user()->messagesObjetNonLus())
                         <a href="{{ route('taximan.courses.index') }}" class="{{ $link }} {{ request()->routeIs('taximan.courses.*') ? $active : $idle }}">
                             Mes courses
                             @if ($badgeChauffeur > 0)

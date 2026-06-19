@@ -177,4 +177,16 @@ class User extends Authenticatable
     {
         return $this->coursesChauffeur()->whereNotNull('note')->count();
     }
+
+    /** Messages d'objet perdu non lus, recus sur mes courses (comme client ou chauffeur). */
+    public function messagesObjetNonLus(): int
+    {
+        return ObjetMessage::query()
+            ->where('expediteur_id', '!=', $this->id)
+            ->where('lu', false)
+            ->whereHas('course', function ($q) {
+                $q->where('visiteur_id', $this->id)->orWhere('chauffeur_id', $this->id);
+            })
+            ->count();
+    }
 }

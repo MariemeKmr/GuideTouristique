@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model
 {
@@ -47,6 +48,11 @@ class Course extends Model
     public function chauffeur(): BelongsTo
     {
         return $this->belongsTo(User::class, 'chauffeur_id');
+    }
+
+    public function messagesObjet(): HasMany
+    {
+        return $this->hasMany(ObjetMessage::class, 'course_id');
     }
 
     public function statutLabel(): string

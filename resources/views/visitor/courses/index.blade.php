@@ -57,6 +57,18 @@
                         </div>
                     @endif
 
+                    @if (in_array($course->statut, ['en_course', 'terminee']))
+                        @php($objNonLus = $course->messagesObjet()->where('expediteur_id', '!=', auth()->id())->where('lu', false)->count())
+                        <div class="mt-3">
+                            <a href="{{ route('objets.show', $course) }}" class="inline-flex items-center gap-2 text-sm font-medium text-lagon-700 hover:underline">
+                                Objet perdu ?
+                                @if ($objNonLus > 0)
+                                    <span class="inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $objNonLus }}</span>
+                                @endif
+                            </a>
+                        </div>
+                    @endif
+
                     {{-- Notation --}}
                     @if ($course->peutEtreNotee())
                         <form method="POST" action="{{ route('visitor.courses.rate', $course) }}" class="mt-4 border-t border-sable-200 pt-4">
