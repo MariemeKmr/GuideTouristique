@@ -82,13 +82,12 @@ Route::middleware('auth')->group(function () {
         // Activites
         Route::get('/activites', [VisitorController::class, 'activites'])->name('activites.index');
         Route::post('/activites/reserver', [VisitorController::class, 'reserverActivite'])->name('activites.reserve');
-        Route::post('/mes-activites/{reservation}/contacter', [VisitorController::class, 'contacterChauffeurActivite'])->name('activites.contact');
+        Route::post('/mes-activites/{reservation}/commander', [VisitorController::class, 'commanderChauffeurActivite'])->name('activites.command');
         Route::delete('/mes-activites/{reservation}', [VisitorController::class, 'annulerActivite'])->name('activites.destroy');
 
         // Chauffeurs
         Route::get('/chauffeurs', [VisitorController::class, 'drivers'])->name('drivers.index');
         Route::get('/chauffeurs/{user}', [VisitorController::class, 'showDriver'])->name('drivers.show');
-        Route::post('/chauffeurs/{user}/contact', [VisitorController::class, 'contactDriver'])->name('drivers.contact');
 
         // Courses
         Route::get('/mes-courses', [VisitorCourseController::class, 'index'])->name('courses.index');
@@ -108,7 +107,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'taximan'])->name('dashboard');
         Route::get('/profil', [TaximanController::class, 'editProfile'])->name('profile.edit');
         Route::put('/profil', [TaximanController::class, 'updateProfile'])->name('profile.update');
-        Route::patch('/contacts/{contactRequest}/lue', [TaximanController::class, 'marquerContactLu'])->name('contacts.read');
 
         // Courses
         Route::get('/mes-courses', [TaximanCourseController::class, 'index'])->name('courses.index');

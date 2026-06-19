@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Taximan;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActiviteReservation;
-use App\Models\ContactRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -72,15 +71,6 @@ class TaximanController extends Controller
         return redirect()
             ->route('taximan.profile.edit')
             ->with('success', 'Profil mis à jour avec succès.');
-    }
-
-    public function marquerContactLu(ContactRequest $contactRequest): RedirectResponse
-    {
-        abort_unless($contactRequest->chauffeur_id === auth()->id(), 403);
-
-        $contactRequest->update(['lu' => true]);
-
-        return back()->with('success', 'Demande marquee comme lue.');
     }
 
     public function activites(Request $request): View

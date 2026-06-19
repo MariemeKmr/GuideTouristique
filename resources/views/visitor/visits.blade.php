@@ -101,7 +101,7 @@
                             </div>
                             <div class="flex items-center gap-2">
                                 @if ($resa->chauffeur)
-                                    <span class="inline-flex rounded-full border border-lagon-100 bg-lagon-50 px-2.5 py-0.5 text-xs font-medium text-lagon-700">Chauffeur contacte</span>
+                                    <span class="inline-flex rounded-full border border-lagon-100 bg-lagon-50 px-2.5 py-0.5 text-xs font-medium text-lagon-700">Chauffeur commande</span>
                                 @endif
                                 <form method="POST" action="{{ route('visitor.activites.destroy', $resa) }}" onsubmit="return confirm('Annuler cette reservation ?');">
                                     @csrf @method('DELETE')
@@ -114,10 +114,15 @@
                             </div>
                         </div>
 
-                        <form method="POST" action="{{ route('visitor.activites.contact', $resa) }}" class="mt-4 flex flex-wrap items-end gap-2">
+                        <form method="POST" action="{{ route('visitor.activites.command', $resa) }}" class="mt-4 flex flex-wrap items-end gap-2">
                             @csrf
-                            <div class="min-w-[14rem]">
-                                <label class="block text-xs text-nuit/60 mb-1">Contacter un chauffeur</label>
+                            <div class="min-w-[12rem]">
+                                <label class="block text-xs text-nuit/60 mb-1">Lieu de depart</label>
+                                <input type="text" name="depart" required placeholder="D'ou partez-vous ?"
+                                       class="w-full rounded-xl border border-sable-300 bg-white px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
+                            </div>
+                            <div class="min-w-[12rem]">
+                                <label class="block text-xs text-nuit/60 mb-1">Chauffeur</label>
                                 <select name="chauffeur_id" required
                                         class="w-full rounded-xl border border-sable-300 bg-white px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
                                     <option value="">Choisir un chauffeur</option>
@@ -127,10 +132,11 @@
                                 </select>
                             </div>
                             <button type="submit"
-                                    class="rounded-xl border border-lagon px-4 py-2 text-sm font-semibold text-lagon-700 hover:bg-lagon-50 transition">
-                                {{ $resa->chauffeur ? 'Recontacter' : 'Contacter' }}
+                                    class="rounded-xl bg-terracotta px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">
+                                {{ $resa->chauffeur ? 'Commander a nouveau' : 'Commander un chauffeur' }}
                             </button>
                         </form>
+                        <p class="mt-1 text-xs text-nuit/40">Destination : {{ $resa->activite->lieu ?: $resa->activite->nom }}. Le chauffeur demarrera le jour de l'activite.</p>
                     </div>
                 @empty
                     <div class="rounded-2xl border border-sable-200 bg-white shadow-soft p-8 text-center text-sm text-nuit/50">

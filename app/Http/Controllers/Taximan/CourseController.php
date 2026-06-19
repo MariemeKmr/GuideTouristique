@@ -77,6 +77,11 @@ class CourseController extends Controller
     {
         abort_unless($course->chauffeur_id === $request->user()->id, 403);
 
+        // Course liee a une activite : on ne peut la lancer que le jour prevu.
+        if ($course->date_prevue && $course->statut === 'acceptee' && $course->date_prevue->isFuture()) {
+            return back()->with('error', 'Vous pourrez demarrer cette course le ' . $course->date_prevue->format('d/m/Y') . '.');
+        }
+
         $suivant = self::ETAPES[$course->statut] ?? null;
         abort_if(is_null($suivant), 403);
 

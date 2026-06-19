@@ -140,18 +140,6 @@ class User extends Authenticatable
         return $this->hasOne(ChauffeurProfile::class);
     }
 
-    /** Demandes de contact envoyees par le visiteur. */
-    public function demandesEnvoyees(): HasMany
-    {
-        return $this->hasMany(ContactRequest::class, 'visiteur_id');
-    }
-
-    /** Demandes de contact recues par le chauffeur. */
-    public function demandesRecues(): HasMany
-    {
-        return $this->hasMany(ContactRequest::class, 'chauffeur_id');
-    }
-
     /** Courses demandees par le visiteur. */
     public function coursesVisiteur(): HasMany
     {

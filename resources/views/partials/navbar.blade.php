@@ -41,14 +41,8 @@
                 @endif
 
                 @if (auth()->user()->isTaximan())
-                    @php($nonLues = auth()->user()->demandesRecues()->where('lu', false)->count())
                     <div class="hidden md:flex items-center gap-1">
-                        <a href="{{ route('taximan.dashboard') }}" class="{{ $link }} {{ request()->routeIs('taximan.dashboard') ? $active : $idle }}">
-                            Tableau de bord
-                            @if ($nonLues > 0)
-                                <span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $nonLues }}</span>
-                            @endif
-                        </a>
+                        <a href="{{ route('taximan.dashboard') }}" class="{{ $link }} {{ request()->routeIs('taximan.dashboard') ? $active : $idle }}">Tableau de bord</a>
                         <a href="{{ route('taximan.profile.edit') }}" class="{{ $link }} {{ request()->routeIs('taximan.profile.*') ? $active : $idle }}">Mon profil</a>
                         @php($enAttente = auth()->user()->coursesChauffeur()->where('statut', 'demandee')->count())
                         @php($contre = auth()->user()->coursesChauffeur()->where('statut', 'contre_propose')->count())

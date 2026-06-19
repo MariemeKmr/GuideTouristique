@@ -46,10 +46,8 @@ class DashboardController extends Controller
 
     public function taximan(): View
     {
-        $user = auth()->user();
-        $profile = $user->chauffeurProfile;
-        $demandes = $user->demandesRecues()->with('visiteur')->latest()->get();
+        $profile = auth()->user()->chauffeurProfile;
 
-        return view('dashboards.taximan', compact('profile', 'demandes'));
+        return view('dashboards.taximan', compact('profile'));
     }
 }

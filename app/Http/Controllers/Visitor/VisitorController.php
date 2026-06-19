@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Visitor;
 use App\Http\Controllers\Controller;
 use App\Models\Activite;
 use App\Models\ActiviteReservation;
-use App\Models\ContactRequest;
+use App\Models\Course;
 use App\Models\Destination;
 use App\Models\Transport;
 use App\Models\User;
@@ -134,33 +134,38 @@ class VisitorController extends Controller
         return back()->with('success', 'Activite reservee.');
     }
 
-    public function contacterChauffeurActivite(Request $request, ActiviteReservation $reservation): RedirectResponse
+    public function commanderChauffeurActivite(Request $request, ActiviteReservation $reservation): RedirectResponse
     {
         abort_unless($reservation->visiteur_id === $request->user()->id, 403);
 
         $data = $request->validate([
             'chauffeur_id' => ['required', 'exists:users,id'],
+            'depart'       => ['required', 'string', 'max:255'],
         ], [], [
             'chauffeur_id' => 'chauffeur',
+            'depart'       => 'depart',
         ]);
 
         $chauffeur = User::findOrFail($data['chauffeur_id']);
         abort_unless($chauffeur->isTaximan(), 422);
 
-        $reservation->update(['chauffeur_id' => $chauffeur->id]);
         $reservation->loadMissing('activite');
 
-        $message = 'Activite : ' . $reservation->activite->nom
-            . ' le ' . $reservation->date_activite->format('d/m/Y')
-            . ($reservation->activite->lieu ? ' a ' . $reservation->activite->lieu : '');
-
-        ContactRequest::create([
+        Course::create([
             'visiteur_id'  => $request->user()->id,
             'chauffeur_id' => $chauffeur->id,
-            'message'      => $message,
+            'depart'       => $data['depart'],
+            'destination'  => $reservation->activite->lieu ?: $reservation->activite->nom,
+            'statut'       => 'demandee',
+            'activite_id'  => $reservation->activite_id,
+            'date_prevue'  => $reservation->date_activite,
         ]);
 
-        return back()->with('success', 'Le chauffeur a ete contacte pour cette activite.');
+        $reservation->update(['chauffeur_id' => $chauffeur->id]);
+
+        return redirect()
+            ->route('visitor.courses.index')
+            ->with('success', 'Chauffeur commande pour cette activite. Il va vous proposer un prix.');
     }
 
     public function annulerActivite(Request $request, ActiviteReservation $reservation): RedirectResponse
@@ -209,18 +214,6 @@ class VisitorController extends Controller
         $user->load('chauffeurProfile');
 
         return view('visitor.drivers.show', ['driver' => $user]);
-    }
-
-    public function contactDriver(Request $request, User $user): RedirectResponse
-    {
-        abort_unless($user->isTaximan(), 404);
-
-        ContactRequest::create([
-            'visiteur_id'  => $request->user()->id,
-            'chauffeur_id' => $user->id,
-        ]);
-
-        return back()->with('success', 'Votre demande de contact a ete envoyee au chauffeur.');
     }
 
     /*
