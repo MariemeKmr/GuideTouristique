@@ -55,30 +55,26 @@
                 </div>
             </div>
 
-            <div class="mt-6">
-                @include('partials.flash')
-                <form method="POST" action="{{ route('visitor.drivers.contact', $driver) }}">
-                    @csrf
-                    <button type="submit"
-                            class="rounded-xl bg-terracotta px-5 py-2.5 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 hover:shadow-lift transition">
-                        Contacter ce chauffeur
-                    </button>
-                </form>
-                <p class="mt-2 text-xs text-nuit/50">Le chauffeur recevra une notification sur la plateforme.</p>
-            </div>
-
             <div class="mt-6 border-t border-sable-200 pt-6">
-                <p class="text-sm font-medium text-nuit">Reserver une course</p>
+                @include('partials.flash')
+                <p class="text-sm font-medium text-nuit">Demander une course</p>
+                <p class="mt-1 text-xs text-nuit/50">Indiquez votre depart et votre destination. Le chauffeur vous proposera un prix.</p>
                 <form method="POST" action="{{ route('visitor.courses.store', $driver) }}" class="mt-3 space-y-3">
                     @csrf
                     <div class="grid gap-3 sm:grid-cols-2">
-                        <input name="depart" type="text" placeholder="Lieu de depart"
-                               class="w-full rounded-xl border border-sable-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
-                        <input name="destination" type="text" placeholder="Destination"
-                               class="w-full rounded-xl border border-sable-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
+                        <div>
+                            <input name="depart" type="text" placeholder="Lieu de depart" value="{{ old('depart') }}" required
+                                   class="w-full rounded-xl border border-sable-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
+                            @error('depart') <p class="mt-1 text-xs text-terracotta-700">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <input name="destination" type="text" placeholder="Destination" value="{{ old('destination') }}" required
+                                   class="w-full rounded-xl border border-sable-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
+                            @error('destination') <p class="mt-1 text-xs text-terracotta-700">{{ $message }}</p> @enderror
+                        </div>
                     </div>
                     <button type="submit"
-                            class="rounded-xl border border-lagon px-5 py-2.5 text-sm font-semibold text-lagon-700 hover:bg-lagon-50 transition">
+                            class="rounded-xl bg-terracotta px-5 py-2.5 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 hover:shadow-lift transition">
                         Demander une course
                     </button>
                 </form>

@@ -46,13 +46,10 @@
                            class="rounded-xl border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-sable-50">
                             Voir le profil
                         </a>
-                        <form method="POST" action="{{ route('visitor.drivers.contact', $driver) }}">
-                            @csrf
-                            <button type="submit"
-                                    class="rounded-xl bg-terracotta px-3 py-1.5 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">
-                                Contacter
-                            </button>
-                        </form>
+                        <a href="{{ route('visitor.drivers.show', $driver) }}"
+                           class="rounded-xl bg-terracotta px-3 py-1.5 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">
+                            Demander une course
+                        </a>
                     </div>
                 </div>
             @empty

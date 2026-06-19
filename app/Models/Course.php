@@ -14,6 +14,8 @@ class Course extends Model
     /** Statuts possibles : cle => libelle */
     public const STATUTS = [
         'demandee'  => 'Demandee',
+        'prix_propose'   => 'Prix propose',
+        'contre_propose' => 'Contre-proposition',
         'acceptee'  => 'Acceptee',
         'en_route'  => 'En route',
         'arrive'    => 'Arrive',
@@ -28,6 +30,9 @@ class Course extends Model
         'chauffeur_id',
         'depart',
         'destination',
+        'prix',
+        'activite_id',
+        'date_prevue',
         'statut',
         'annulee_par',
         'alerte_chauffeur',
@@ -37,7 +42,7 @@ class Course extends Model
 
     protected function casts(): array
     {
-        return ['note' => 'integer', 'alerte_chauffeur' => 'boolean'];
+        return ['note' => 'integer', 'prix' => 'integer', 'date_prevue' => 'date', 'alerte_chauffeur' => 'boolean'];
     }
 
     public function visiteur(): BelongsTo
@@ -48,6 +53,11 @@ class Course extends Model
     public function chauffeur(): BelongsTo
     {
         return $this->belongsTo(User::class, 'chauffeur_id');
+    }
+
+    public function activite(): BelongsTo
+    {
+        return $this->belongsTo(Activite::class);
     }
 
     public function messagesObjet(): HasMany

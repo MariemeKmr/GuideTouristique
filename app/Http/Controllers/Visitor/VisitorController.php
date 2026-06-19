@@ -11,6 +11,7 @@ use App\Models\Transport;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -108,9 +109,18 @@ class VisitorController extends Controller
     public function reserverActivite(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'activite_id'   => ['required', 'exists:activites,id'],
+            'activite_id'   => [
+                'required',
+                'exists:activites,id',
+                Rule::unique('activite_reservations')->where(function ($q) use ($request) {
+                    return $q->where('visiteur_id', $request->user()->id)
+                             ->where('date_activite', $request->input('date_activite'));
+                }),
+            ],
             'date_activite' => ['required', 'date', 'after_or_equal:today'],
-        ], [], [
+        ], [
+            'activite_id.unique' => 'Vous avez deja reserve cette activite a cette date.',
+        ], [
             'activite_id'   => 'activite',
             'date_activite' => 'date',
         ]);
@@ -151,6 +161,15 @@ class VisitorController extends Controller
         ]);
 
         return back()->with('success', 'Le chauffeur a ete contacte pour cette activite.');
+    }
+
+    public function annulerActivite(Request $request, ActiviteReservation $reservation): RedirectResponse
+    {
+        abort_unless($reservation->visiteur_id === $request->user()->id, 403);
+
+        $reservation->delete();
+
+        return back()->with('success', 'Reservation annulee.');
     }
 
     /*

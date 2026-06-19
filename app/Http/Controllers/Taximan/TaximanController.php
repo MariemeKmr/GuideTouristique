@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Taximan;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActiviteReservation;
 use App\Models\ContactRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -80,5 +81,15 @@ class TaximanController extends Controller
         $contactRequest->update(['lu' => true]);
 
         return back()->with('success', 'Demande marquee comme lue.');
+    }
+
+    public function activites(Request $request): View
+    {
+        $reservations = ActiviteReservation::with(['activite', 'visiteur'])
+            ->where('chauffeur_id', $request->user()->id)
+            ->orderByDesc('date_activite')
+            ->get();
+
+        return view('taximan.activites.index', compact('reservations'));
     }
 }

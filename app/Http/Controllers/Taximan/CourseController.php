@@ -14,7 +14,7 @@ class CourseController extends Controller
     private const ETAPES = [
         'acceptee'  => 'en_route',
         'en_route'  => 'arrive',
-        'arrive'    => 'en_course',
+        'arrive'    => 'attente_client',
         'en_course' => 'terminee',
     ];
 
@@ -26,19 +26,25 @@ class CourseController extends Controller
         $user->coursesChauffeur()->where('alerte_chauffeur', true)->update(['alerte_chauffeur' => false]);
 
         $courses = $user->coursesChauffeur()
-            ->with('visiteur')
+            ->with(['visiteur', 'activite'])
             ->latest()
             ->paginate(10);
 
         return view('taximan.courses.index', compact('courses'));
     }
 
-    public function accepter(Request $request, Course $course): RedirectResponse
+    /** Le chauffeur propose un prix pour la demande. */
+    public function proposerPrix(Request $request, Course $course): RedirectResponse
     {
         $this->autorise($request, $course, ['demandee']);
-        $course->update(['statut' => 'acceptee']);
 
-        return back()->with('success', 'Course acceptee.');
+        $data = $request->validate([
+            'prix' => ['required', 'integer', 'min:0'],
+        ], [], ['prix' => 'prix']);
+
+        $course->update(['statut' => 'prix_propose', 'prix' => $data['prix']]);
+
+        return back()->with('success', 'Prix propose au client.');
     }
 
     public function refuser(Request $request, Course $course): RedirectResponse
@@ -46,7 +52,25 @@ class CourseController extends Controller
         $this->autorise($request, $course, ['demandee']);
         $course->update(['statut' => 'annulee']);
 
-        return back()->with('success', 'Course refusee.');
+        return back()->with('success', 'Demande refusee.');
+    }
+
+    /** Le chauffeur accepte la contre-proposition du client. */
+    public function accepterContrePrix(Request $request, Course $course): RedirectResponse
+    {
+        $this->autorise($request, $course, ['contre_propose']);
+        $course->update(['statut' => 'acceptee']);
+
+        return back()->with('success', 'Prix accepte. Vous pouvez rejoindre le client.');
+    }
+
+    /** Le chauffeur refuse la contre-proposition : course annulee. */
+    public function refuserContrePrix(Request $request, Course $course): RedirectResponse
+    {
+        $this->autorise($request, $course, ['contre_propose']);
+        $course->update(['statut' => 'annulee', 'annulee_par' => 'prix']);
+
+        return back()->with('success', "Contre-proposition refusee. La course est annulee.");
     }
 
     public function avancer(Request $request, Course $course): RedirectResponse

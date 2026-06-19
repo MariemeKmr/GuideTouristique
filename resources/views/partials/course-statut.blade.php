@@ -1,5 +1,7 @@
 @php($map = [
     'demandee'  => 'bg-terracotta/10 text-terracotta-700 border-terracotta/20',
+    'prix_propose'   => 'bg-amber-50 text-amber-700 border-amber-200',
+    'contre_propose' => 'bg-amber-50 text-amber-700 border-amber-200',
     'acceptee'  => 'bg-lagon-50 text-lagon-700 border-lagon-100',
     'en_route'  => 'bg-lagon-50 text-lagon-700 border-lagon-100',
     'arrive'    => 'bg-lagon-50 text-lagon-700 border-lagon-100',

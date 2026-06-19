@@ -27,9 +27,10 @@
                         <a href="{{ route('visitor.transports.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.transports.*') ? $active : $idle }}">Transports</a>
                         <a href="{{ route('visitor.activites.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.activites.*') ? $active : $idle }}">Activites</a>
                         <a href="{{ route('visitor.drivers.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.drivers.*') ? $active : $idle }}">Chauffeurs</a>
+                        @php($aDecider = auth()->user()->coursesVisiteur()->where('statut', 'prix_propose')->count())
                         @php($aConfirmer = auth()->user()->coursesVisiteur()->where('statut', 'attente_client')->count())
                         @php($aNoter = auth()->user()->coursesVisiteur()->where('statut', 'terminee')->whereNull('note')->count())
-                        @php($badgeVisiteur = $aConfirmer + $aNoter + auth()->user()->messagesObjetNonLus())
+                        @php($badgeVisiteur = $aDecider + $aConfirmer + $aNoter + auth()->user()->messagesObjetNonLus())
                         <a href="{{ route('visitor.courses.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.courses.*') ? $active : $idle }}">
                             Mes courses
                             @if ($badgeVisiteur > 0)
@@ -50,14 +51,17 @@
                         </a>
                         <a href="{{ route('taximan.profile.edit') }}" class="{{ $link }} {{ request()->routeIs('taximan.profile.*') ? $active : $idle }}">Mon profil</a>
                         @php($enAttente = auth()->user()->coursesChauffeur()->where('statut', 'demandee')->count())
+                        @php($contre = auth()->user()->coursesChauffeur()->where('statut', 'contre_propose')->count())
                         @php($alertes = auth()->user()->coursesChauffeur()->where('alerte_chauffeur', true)->count())
-                        @php($badgeChauffeur = $enAttente + $alertes + auth()->user()->messagesObjetNonLus())
+                        @php($badgeChauffeur = $enAttente + $contre + $alertes + auth()->user()->messagesObjetNonLus())
                         <a href="{{ route('taximan.courses.index') }}" class="{{ $link }} {{ request()->routeIs('taximan.courses.*') ? $active : $idle }}">
                             Mes courses
                             @if ($badgeChauffeur > 0)
                                 <span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $badgeChauffeur }}</span>
                             @endif
                         </a>
+                        <a href="{{ route('taximan.clients.index') }}" class="{{ $link }} {{ request()->routeIs('taximan.clients.*') ? $active : $idle }}">Mes clients</a>
+                        <a href="{{ route('taximan.activites.index') }}" class="{{ $link }} {{ request()->routeIs('taximan.activites.*') ? $active : $idle }}">Activites</a>
                     </div>
                 @endif
             </div>

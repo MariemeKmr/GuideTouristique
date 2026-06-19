@@ -15,7 +15,7 @@ class CourseController extends Controller
     {
         $courses = $request->user()
             ->coursesVisiteur()
-            ->with('chauffeur')
+            ->with(['chauffeur', 'activite'])
             ->latest()
             ->paginate(10);
 
@@ -27,8 +27,8 @@ class CourseController extends Controller
         abort_unless($user->isTaximan(), 404);
 
         $data = $request->validate([
-            'depart'      => ['nullable', 'string', 'max:255'],
-            'destination' => ['nullable', 'string', 'max:255'],
+            'depart'      => ['required', 'string', 'max:255'],
+            'destination' => ['required', 'string', 'max:255'],
         ], [], [
             'depart'      => 'depart',
             'destination' => 'destination',
@@ -37,16 +37,57 @@ class CourseController extends Controller
         Course::create([
             'visiteur_id'  => $request->user()->id,
             'chauffeur_id' => $user->id,
-            'depart'       => $data['depart'] ?? null,
-            'destination'  => $data['destination'] ?? null,
+            'depart'       => $data['depart'],
+            'destination'  => $data['destination'],
             'statut'       => 'demandee',
         ]);
 
         return redirect()
             ->route('visitor.courses.index')
-            ->with('success', 'Votre demande de course a ete envoyee au chauffeur.');
+            ->with('success', 'Demande envoyee. Le chauffeur va vous proposer un prix.');
     }
 
+    /** Le client accepte le prix propose par le chauffeur. */
+    public function accepterPrix(Request $request, Course $course): RedirectResponse
+    {
+        $this->autoriseVisiteur($request, $course);
+        abort_unless($course->statut === 'prix_propose', 403);
+
+        $course->update(['statut' => 'acceptee']);
+
+        return back()->with('success', 'Prix accepte. Le chauffeur arrive vers vous.');
+    }
+
+    /** Le client propose un autre prix (une seule contre-proposition). */
+    public function contrePrix(Request $request, Course $course): RedirectResponse
+    {
+        $this->autoriseVisiteur($request, $course);
+        abort_unless($course->statut === 'prix_propose', 403);
+
+        $data = $request->validate([
+            'prix' => ['required', 'integer', 'min:0'],
+        ], [], ['prix' => 'prix']);
+
+        $course->update([
+            'statut' => 'contre_propose',
+            'prix'   => $data['prix'],
+        ]);
+
+        return back()->with('success', 'Votre prix a ete propose au chauffeur.');
+    }
+
+    /** Le client refuse le prix : course annulee. */
+    public function refuserPrix(Request $request, Course $course): RedirectResponse
+    {
+        $this->autoriseVisiteur($request, $course);
+        abort_unless($course->statut === 'prix_propose', 403);
+
+        $course->update(['statut' => 'annulee', 'annulee_par' => 'prix']);
+
+        return back()->with('success', "Vous n'etes pas tombes d'accord sur le prix. Essayez un autre chauffeur.");
+    }
+
+    /** Le client confirme (ou non) le demarrage une fois le chauffeur arrive. */
     public function confirmer(Request $request, Course $course): RedirectResponse
     {
         $this->autoriseVisiteur($request, $course);
@@ -74,7 +115,7 @@ class CourseController extends Controller
     public function annuler(Request $request, Course $course): RedirectResponse
     {
         $this->autoriseVisiteur($request, $course);
-        abort_unless(in_array($course->statut, ['demandee', 'acceptee', 'en_route', 'arrive'], true), 403);
+        abort_unless(in_array($course->statut, ['demandee', 'prix_propose', 'contre_propose', 'acceptee', 'en_route', 'arrive'], true), 403);
 
         $course->update(['statut' => 'annulee']);
 

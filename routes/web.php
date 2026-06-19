@@ -83,6 +83,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/activites', [VisitorController::class, 'activites'])->name('activites.index');
         Route::post('/activites/reserver', [VisitorController::class, 'reserverActivite'])->name('activites.reserve');
         Route::post('/mes-activites/{reservation}/contacter', [VisitorController::class, 'contacterChauffeurActivite'])->name('activites.contact');
+        Route::delete('/mes-activites/{reservation}', [VisitorController::class, 'annulerActivite'])->name('activites.destroy');
 
         // Chauffeurs
         Route::get('/chauffeurs', [VisitorController::class, 'drivers'])->name('drivers.index');
@@ -93,6 +94,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/mes-courses', [VisitorCourseController::class, 'index'])->name('courses.index');
         Route::post('/chauffeurs/{user}/course', [VisitorCourseController::class, 'store'])->name('courses.store');
         Route::patch('/courses/{course}/confirmer', [VisitorCourseController::class, 'confirmer'])->name('courses.confirm');
+        Route::patch('/courses/{course}/prix/accepter', [VisitorCourseController::class, 'accepterPrix'])->name('courses.price.accept');
+        Route::patch('/courses/{course}/prix/contre', [VisitorCourseController::class, 'contrePrix'])->name('courses.price.counter');
+        Route::patch('/courses/{course}/prix/refuser', [VisitorCourseController::class, 'refuserPrix'])->name('courses.price.refuse');
         Route::patch('/courses/{course}/annuler', [VisitorCourseController::class, 'annuler'])->name('courses.cancel');
         Route::patch('/courses/{course}/noter', [VisitorCourseController::class, 'noter'])->name('courses.rate');
     });
@@ -108,11 +112,14 @@ Route::middleware('auth')->group(function () {
 
         // Courses
         Route::get('/mes-courses', [TaximanCourseController::class, 'index'])->name('courses.index');
-        Route::patch('/courses/{course}/accepter', [TaximanCourseController::class, 'accepter'])->name('courses.accept');
+        Route::patch('/courses/{course}/prix', [TaximanCourseController::class, 'proposerPrix'])->name('courses.price.propose');
+        Route::patch('/courses/{course}/contre/accepter', [TaximanCourseController::class, 'accepterContrePrix'])->name('courses.counter.accept');
+        Route::patch('/courses/{course}/contre/refuser', [TaximanCourseController::class, 'refuserContrePrix'])->name('courses.counter.refuse');
         Route::patch('/courses/{course}/refuser', [TaximanCourseController::class, 'refuser'])->name('courses.refuse');
         Route::patch('/courses/{course}/avancer', [TaximanCourseController::class, 'avancer'])->name('courses.advance');
 
         // Historique des clients
         Route::get('/clients', [TaximanClientController::class, 'index'])->name('clients.index');
+        Route::get('/activites', [TaximanController::class, 'activites'])->name('activites.index');
     });
 });
