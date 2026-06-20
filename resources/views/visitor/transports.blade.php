@@ -6,6 +6,7 @@
     @include('partials.navbar')
 
     <main class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+        @include('partials.tabs-decouvrir')
         <h1 class="text-2xl font-semibold text-nuit">Moyens de transport</h1>
         <p class="mt-1 text-sm text-gray-500">Comment vous déplacer et à quel coût.</p>
 

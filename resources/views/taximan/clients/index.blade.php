@@ -45,10 +45,14 @@
                             <td class="px-5 py-3 text-center text-nuit/70">{{ $c->terminees }}</td>
                             <td class="px-5 py-3 text-nuit/60">{{ $c->derniere->format('d/m/Y') }}</td>
                             <td class="px-5 py-3 text-right">
-                                <a href="{{ route('objets.show', $c->client) }}"
-                                   class="inline-flex rounded-lg border border-lagon px-3 py-1.5 text-xs font-semibold text-lagon-700 hover:bg-lagon-50 transition">
-                                    Ouvrir
-                                </a>
+                                @if ($c->terminees > 0)
+                                    <a href="{{ route('objets.show', $c->client) }}"
+                                       class="inline-flex rounded-lg border border-lagon px-3 py-1.5 text-xs font-semibold text-lagon-700 hover:bg-lagon-50 transition">
+                                        Ouvrir
+                                    </a>
+                                @else
+                                    <span class="text-xs text-nuit/30">-</span>
+                                @endif
                             </td>
                         </tr>
                     @empty

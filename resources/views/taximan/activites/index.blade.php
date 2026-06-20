@@ -6,6 +6,7 @@
     @include('partials.navbar')
 
     <main class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+        @include('partials.tabs-chauffeur-activite')
         <h1 class="text-2xl font-semibold text-nuit">Activites</h1>
         <p class="mt-1 text-sm text-nuit/60">Les activites pour lesquelles un client vous a contacte.</p>
 

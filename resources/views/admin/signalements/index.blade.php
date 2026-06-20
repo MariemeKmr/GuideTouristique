@@ -45,12 +45,18 @@
 
                     <div class="mt-3 text-xs text-nuit/40">Signale par : {{ $signalement->auteur?->full_name ?? '-' }}</div>
 
-                    @unless ($signalement->lu)
-                        <form method="POST" action="{{ route('admin.signalements.read', $signalement) }}" class="mt-3">
-                            @csrf @method('PATCH')
-                            <button class="rounded-xl border border-sable-300 px-3 py-1.5 text-xs font-medium text-nuit/70 hover:bg-sable-50">Marquer comme traite</button>
-                        </form>
-                    @endunless
+                    <div class="mt-3 flex flex-wrap items-center gap-2">
+                        <a href="{{ route('signalements.show', $signalement) }}"
+                           class="rounded-xl border border-lagon px-3 py-1.5 text-xs font-semibold text-lagon-700 hover:bg-lagon-50 transition">
+                            Voir et repondre
+                        </a>
+                        @unless ($signalement->lu)
+                            <form method="POST" action="{{ route('admin.signalements.read', $signalement) }}">
+                                @csrf @method('PATCH')
+                                <button class="rounded-xl border border-sable-300 px-3 py-1.5 text-xs font-medium text-nuit/70 hover:bg-sable-50">Marquer comme traite</button>
+                            </form>
+                        @endunless
+                    </div>
                 </div>
             @empty
                 <div class="rounded-2xl border border-sable-200 bg-white shadow-soft p-10 text-center text-sm text-nuit/50">

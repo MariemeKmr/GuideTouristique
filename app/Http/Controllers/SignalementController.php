@@ -11,7 +11,7 @@ use Illuminate\View\View;
 
 class SignalementController extends Controller
 {
-    private const STATUTS_ELIGIBLES = ['en_course', 'terminee', 'annulee'];
+    private const STATUTS_ELIGIBLES = ['en_course', 'terminee'];
 
     public function create(Request $request, Course $course): View
     {
@@ -47,6 +47,58 @@ class SignalementController extends Controller
         $route = $request->user()->isTaximan() ? 'taximan.courses.index' : 'visitor.courses.index';
 
         return redirect()->route($route)->with('success', "Votre signalement a ete transmis a l'administration.");
+    }
+
+    /** Fil de discussion entre l'administration et le plaignant. */
+    public function show(Request $request, Signalement $signalement): View
+    {
+        $this->autoriseConversation($request, $signalement);
+
+        $signalement->messages()
+            ->where('expediteur_id', '!=', $request->user()->id)
+            ->where('lu', false)
+            ->update(['lu' => true]);
+
+        $signalement->load(['course.visiteur', 'course.chauffeur', 'auteur', 'messages.expediteur']);
+        $estAdmin = $request->user()->isAdmin();
+
+        return view('signalements.show', compact('signalement', 'estAdmin'));
+    }
+
+    public function message(Request $request, Signalement $signalement): RedirectResponse
+    {
+        $this->autoriseConversation($request, $signalement);
+        abort_if($signalement->lu, 403, 'Ce signalement est traite, la conversation est close.');
+
+        $data = $request->validate([
+            'contenu' => ['required', 'string', 'max:1000'],
+        ], [], ['contenu' => 'message']);
+
+        $signalement->messages()->create([
+            'expediteur_id' => $request->user()->id,
+            'contenu'       => $data['contenu'],
+        ]);
+
+        return redirect()->route('signalements.show', $signalement)->with('success', 'Message envoye.');
+    }
+
+    /** Liste des signalements emis par l'utilisateur courant. */
+    public function mes(Request $request): View
+    {
+        $signalements = $request->user()
+            ->signalementsAuteur()
+            ->with(['course'])
+            ->latest()
+            ->paginate(10);
+
+        return view('signalements.mes', compact('signalements'));
+    }
+
+    /** Seuls un admin et l'auteur du signalement accedent a la conversation. */
+    private function autoriseConversation(Request $request, Signalement $signalement): void
+    {
+        $user = $request->user();
+        abort_unless($user->isAdmin() || $signalement->auteur_id === $user->id, 403);
     }
 
     /** Verifie que l'utilisateur est un participant autorise et renvoie la cible du signalement. */

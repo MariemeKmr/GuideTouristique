@@ -172,7 +172,25 @@ class User extends Authenticatable
         return $this->coursesChauffeur()->whereNotNull('note')->count();
     }
 
-    /** Messages d'objet perdu non lus, recus en tant que client ou chauffeur. */
+    /** Signalements emis par cet utilisateur. */
+    public function signalementsAuteur(): HasMany
+    {
+        return $this->hasMany(Signalement::class, 'auteur_id');
+    }
+
+    /** Reponses de l'administration non lues sur mes signalements. */
+    public function signalementsMessagesNonLus(): int
+    {
+        return SignalementMessage::query()
+            ->where('expediteur_id', '!=', $this->id)
+            ->where('lu', false)
+            ->whereHas('signalement', function ($q) {
+                $q->where('auteur_id', $this->id);
+            })
+            ->count();
+    }
+
+        /** Messages d'objet perdu non lus, recus en tant que client ou chauffeur. */
     public function messagesObjetNonLus(): int
     {
         return ObjetMessage::query()

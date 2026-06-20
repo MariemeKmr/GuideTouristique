@@ -6,6 +6,7 @@
     @include('partials.navbar')
 
     <main class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+        @include('partials.tabs-chauffeur-activite')
         <h1 class="text-2xl font-semibold text-nuit">Mes courses</h1>
         <p class="mt-1 text-sm text-nuit/60">Proposez un prix, gerez l'avancement de vos courses.</p>
 
@@ -75,7 +76,7 @@
                             @endif
                         @else
                             {{-- Course active : coordonner par telephone --}}
-                            @if ($course->visiteur->phone)
+                            @if ($course->visiteur->phone && $course->statut !== 'en_course')
                                 <a href="tel:{{ preg_replace('/\s+/', '', $course->visiteur->phone) }}"
                                    class="rounded-xl border border-lagon px-4 py-2 text-sm font-semibold text-lagon-700 hover:bg-lagon-50 transition">
                                     Appeler le client
@@ -100,7 +101,7 @@
                         @endif
                     </div>
 
-                    @if (in_array($course->statut, ['en_course', 'terminee', 'annulee']))
+                    @if (in_array($course->statut, ['en_course', 'terminee']))
                         <div class="mt-3 border-t border-sable-200 pt-3">
                             <a href="{{ route('signalements.create', $course) }}" class="text-xs font-medium text-nuit/50 hover:text-terracotta-700 hover:underline">Signaler le passager</a>
                         </div>

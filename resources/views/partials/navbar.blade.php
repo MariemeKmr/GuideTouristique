@@ -20,6 +20,10 @@
             + $u->coursesChauffeur()->where('alerte_chauffeur', true)->count()
             + $u->messagesObjetNonLus())
     @endif
+    @if ($u->isVisiteur() || $u->isTaximan())
+        @php($mesSignalements = $u->signalementsAuteur()->count())
+        @php($signMsgNonLus = $u->signalementsMessagesNonLus())
+    @endif
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="flex items-center justify-between h-16">
@@ -47,9 +51,8 @@
 
                 @if ($u->isVisiteur())
                     <div class="hidden md:flex items-center gap-1">
-                        <a href="{{ route('visitor.destinations.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.destinations.*') ? $active : $idle }}">Destinations</a>
+                        <a href="{{ route('visitor.destinations.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.destinations.*') || request()->routeIs('visitor.transports.*') ? $active : $idle }}">Decouvrir</a>
                         <a href="{{ route('visitor.visits') }}" class="{{ $link }} {{ request()->routeIs('visitor.visits') ? $active : $idle }}">Mes visites</a>
-                        <a href="{{ route('visitor.transports.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.transports.*') ? $active : $idle }}">Transports</a>
                         <a href="{{ route('visitor.activites.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.activites.*') ? $active : $idle }}">Activites</a>
                         <a href="{{ route('visitor.drivers.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.drivers.*') ? $active : $idle }}">Chauffeurs</a>
                         <a href="{{ route('visitor.courses.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.courses.*') ? $active : $idle }}">
@@ -58,6 +61,12 @@
                                 <span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $badgeVisiteur }}</span>
                             @endif
                         </a>
+                        @if ($mesSignalements > 0)
+                            <a href="{{ route('signalements.mes') }}" class="{{ $link }} {{ request()->routeIs('signalements.mes') ? $active : $idle }}">
+                                Mes signalements
+                                @if ($signMsgNonLus > 0)<span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $signMsgNonLus }}</span>@endif
+                            </a>
+                        @endif
                     </div>
                 @endif
 
@@ -65,14 +74,19 @@
                     <div class="hidden md:flex items-center gap-1">
                         <a href="{{ route('taximan.dashboard') }}" class="{{ $link }} {{ request()->routeIs('taximan.dashboard') ? $active : $idle }}">Tableau de bord</a>
                         <a href="{{ route('taximan.profile.edit') }}" class="{{ $link }} {{ request()->routeIs('taximan.profile.*') ? $active : $idle }}">Mon profil</a>
-                        <a href="{{ route('taximan.courses.index') }}" class="{{ $link }} {{ request()->routeIs('taximan.courses.*') ? $active : $idle }}">
+                        <a href="{{ route('taximan.courses.index') }}" class="{{ $link }} {{ request()->routeIs('taximan.courses.*') || request()->routeIs('taximan.activites.*') ? $active : $idle }}">
                             Mes courses
                             @if ($badgeChauffeur > 0)
                                 <span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $badgeChauffeur }}</span>
                             @endif
                         </a>
+                        @if ($mesSignalements > 0)
+                            <a href="{{ route('signalements.mes') }}" class="{{ $link }} {{ request()->routeIs('signalements.mes') ? $active : $idle }}">
+                                Mes signalements
+                                @if ($signMsgNonLus > 0)<span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $signMsgNonLus }}</span>@endif
+                            </a>
+                        @endif
                         <a href="{{ route('taximan.clients.index') }}" class="{{ $link }} {{ request()->routeIs('taximan.clients.*') ? $active : $idle }}">Mes clients</a>
-                        <a href="{{ route('taximan.activites.index') }}" class="{{ $link }} {{ request()->routeIs('taximan.activites.*') ? $active : $idle }}">Activites</a>
                     </div>
                 @endif
             </div>
@@ -123,9 +137,8 @@
             @endif
 
             @if ($u->isVisiteur())
-                <a href="{{ route('visitor.destinations.index') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.destinations.*') ? $active : $midle }}">Destinations</a>
+                <a href="{{ route('visitor.destinations.index') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.destinations.*') || request()->routeIs('visitor.transports.*') ? $active : $midle }}">Decouvrir</a>
                 <a href="{{ route('visitor.visits') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.visits') ? $active : $midle }}">Mes visites</a>
-                <a href="{{ route('visitor.transports.index') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.transports.*') ? $active : $midle }}">Transports</a>
                 <a href="{{ route('visitor.activites.index') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.activites.*') ? $active : $midle }}">Activites</a>
                 <a href="{{ route('visitor.drivers.index') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.drivers.*') ? $active : $midle }}">Chauffeurs</a>
                 <a href="{{ route('visitor.courses.index') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.courses.*') ? $active : $midle }}">
@@ -134,19 +147,30 @@
                         <span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $badgeVisiteur }}</span>
                     @endif
                 </a>
+                @if ($mesSignalements > 0)
+                    <a href="{{ route('signalements.mes') }}" class="{{ $mlink }} {{ request()->routeIs('signalements.mes') ? $active : $midle }}">
+                        Mes signalements
+                        @if ($signMsgNonLus > 0)<span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $signMsgNonLus }}</span>@endif
+                    </a>
+                @endif
             @endif
 
             @if ($u->isTaximan())
                 <a href="{{ route('taximan.dashboard') }}" class="{{ $mlink }} {{ request()->routeIs('taximan.dashboard') ? $active : $midle }}">Tableau de bord</a>
                 <a href="{{ route('taximan.profile.edit') }}" class="{{ $mlink }} {{ request()->routeIs('taximan.profile.*') ? $active : $midle }}">Mon profil</a>
-                <a href="{{ route('taximan.courses.index') }}" class="{{ $mlink }} {{ request()->routeIs('taximan.courses.*') ? $active : $midle }}">
+                <a href="{{ route('taximan.courses.index') }}" class="{{ $mlink }} {{ request()->routeIs('taximan.courses.*') || request()->routeIs('taximan.activites.*') ? $active : $midle }}">
                     Mes courses
                     @if ($badgeChauffeur > 0)
                         <span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $badgeChauffeur }}</span>
                     @endif
                 </a>
+                @if ($mesSignalements > 0)
+                    <a href="{{ route('signalements.mes') }}" class="{{ $mlink }} {{ request()->routeIs('signalements.mes') ? $active : $midle }}">
+                        Mes signalements
+                        @if ($signMsgNonLus > 0)<span class="ml-1 inline-flex items-center justify-center rounded-full bg-terracotta px-1.5 text-xs font-semibold text-white">{{ $signMsgNonLus }}</span>@endif
+                    </a>
+                @endif
                 <a href="{{ route('taximan.clients.index') }}" class="{{ $mlink }} {{ request()->routeIs('taximan.clients.*') ? $active : $midle }}">Mes clients</a>
-                <a href="{{ route('taximan.activites.index') }}" class="{{ $mlink }} {{ request()->routeIs('taximan.activites.*') ? $active : $midle }}">Activites</a>
             @endif
 
             <form method="POST" action="{{ route('logout') }}" class="pt-2">

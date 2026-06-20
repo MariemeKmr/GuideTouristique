@@ -3,11 +3,17 @@
 namespace Database\Seeders;
 
 use App\Models\ChauffeurProfile;
+use App\Models\Activite;
+use App\Models\ActiviteReservation;
+use App\Models\Course;
 use App\Models\Destination;
+use App\Models\Signalement;
 use App\Models\Transport;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -120,5 +126,73 @@ class DatabaseSeeder extends Seeder
 
         // Activites reelles (apres les destinations pour pouvoir les lier)
         $this->call(ActiviteSeeder::class);
+
+        /*
+        |--------------------------------------------------------------------
+        | Interactions de demonstration entre Awa Diop et Moussa Fall
+        |--------------------------------------------------------------------
+        */
+        $awa    = User::where('email', 'visiteur@guide.test')->first();
+        $moussa = User::where('email', 'taximan@guide.test')->first();
+
+        if ($awa && $moussa) {
+            // 1 visite realisee dans le compte d'Awa
+            $goree = Destination::where('name', 'Ile de Goree')->first();
+            if ($goree && ! DB::table('destination_visiteur')->where('user_id', $awa->id)->where('destination_id', $goree->id)->exists()) {
+                DB::table('destination_visiteur')->insert([
+                    'id'            => (string) Str::uuid(),
+                    'user_id'       => $awa->id,
+                    'destination_id' => $goree->id,
+                    'date_visite'   => now()->subDays(12)->toDateString(),
+                    'created_at'    => now(),
+                    'updated_at'    => now(),
+                ]);
+            }
+
+            // Course terminee et notee (Moussa apparait dans "Mes clients" d'Awa, objet perdu disponible)
+            $terminee = Course::firstOrCreate(
+                ['visiteur_id' => $awa->id, 'chauffeur_id' => $moussa->id, 'depart' => 'Aeroport AIBD', 'destination' => 'Plateau, Dakar'],
+                ['prix' => 8000, 'statut' => 'terminee', 'note' => 5, 'commentaire' => 'Chauffeur ponctuel et tres sympathique.']
+            );
+            $terminee->forceFill(['created_at' => now()->subDays(9), 'updated_at' => now()->subDays(9)])->save();
+
+            // Deuxieme course terminee (sans note) pour etoffer l'historique
+            Course::firstOrCreate(
+                ['visiteur_id' => $awa->id, 'chauffeur_id' => $moussa->id, 'depart' => 'Plateau', 'destination' => 'Almadies'],
+                ['prix' => 3500, 'statut' => 'terminee']
+            )->forceFill(['created_at' => now()->subDays(5), 'updated_at' => now()->subDays(5)])->save();
+
+            // Course en cours (le client est dans la voiture)
+            Course::firstOrCreate(
+                ['visiteur_id' => $awa->id, 'chauffeur_id' => $moussa->id, 'depart' => 'Yoff', 'destination' => 'Marche Soumbedioune'],
+                ['prix' => 2500, 'statut' => 'en_course']
+            );
+
+            // Nouvelle demande en attente de prix (cote chauffeur)
+            Course::firstOrCreate(
+                ['visiteur_id' => $awa->id, 'chauffeur_id' => $moussa->id, 'depart' => 'Plateau', 'destination' => 'Lac Rose'],
+                ['statut' => 'demandee']
+            );
+
+            // Reservation d'activite avec course planifiee confiee a Moussa
+            $activite = Activite::first();
+            if ($activite) {
+                ActiviteReservation::firstOrCreate(
+                    ['visiteur_id' => $awa->id, 'activite_id' => $activite->id, 'date_activite' => now()->addDays(3)->toDateString()],
+                    ['chauffeur_id' => $moussa->id]
+                );
+
+                Course::firstOrCreate(
+                    ['visiteur_id' => $awa->id, 'chauffeur_id' => $moussa->id, 'activite_id' => $activite->id],
+                    ['depart' => 'Almadies', 'destination' => $activite->lieu ?: $activite->nom, 'prix' => 6000, 'statut' => 'acceptee', 'date_prevue' => now()->addDays(3)->toDateString()]
+                );
+            }
+
+            // Un signalement pour illustrer l'echange admin / plaignant
+            Signalement::firstOrCreate(
+                ['course_id' => $terminee->id, 'auteur_id' => $awa->id, 'motif' => 'facturation'],
+                ['cible' => 'chauffeur', 'description' => "Le tarif final ne correspondait pas a ce qui etait annonce au depart."]
+            );
+        }
     }
 }

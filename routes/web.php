@@ -56,6 +56,10 @@ Route::middleware('auth')->group(function () {
     // Signalement d'un probleme sur une course (visiteur ou chauffeur)
     Route::get('/signalements/{course}/nouveau', [SignalementController::class, 'create'])->name('signalements.create');
     Route::post('/signalements/{course}', [SignalementController::class, 'store'])->name('signalements.store');
+    // Conversation autour d'un signalement (admin et plaignant)
+    Route::get('/mes-signalements', [SignalementController::class, 'mes'])->name('signalements.mes');
+    Route::get('/signalement/{signalement}', [SignalementController::class, 'show'])->name('signalements.show');
+    Route::post('/signalement/{signalement}/message', [SignalementController::class, 'message'])->name('signalements.message');
 
     /*
     | --- Espace administrateur (préfixe /admin, noms admin.*) ---

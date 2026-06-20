@@ -134,9 +134,9 @@
                         </div>
                     @endif
 
-                    @if (in_array($course->statut, ['en_course', 'terminee', 'annulee']))
+                    @if (in_array($course->statut, ['en_course', 'terminee']))
                         <div class="mt-3 border-t border-sable-200 pt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
-                            @if (in_array($course->statut, ['en_course', 'terminee']))
+                            @if ($course->statut === 'terminee')
                                 <a href="{{ route('objets.show', $course->chauffeur) }}" class="text-xs font-medium text-lagon-700 hover:underline">Objet perdu ?</a>
                             @endif
                             <a href="{{ route('signalements.create', $course) }}" class="text-xs font-medium text-nuit/50 hover:text-terracotta-700 hover:underline">Signaler un probleme</a>
