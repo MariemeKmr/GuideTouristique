@@ -29,12 +29,19 @@ class SignalementController extends Controller
         $data = $request->validate([
             'motif'       => ['required', Rule::in(array_keys($motifs))],
             'description' => ['nullable', 'required_if:motif,autre', 'string', 'max:1000'],
+            'preuve'      => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,pdf,doc,docx', 'max:5120'],
         ], [
             'description.required_if' => 'Merci de preciser votre souci.',
         ], [
             'motif'       => 'motif',
             'description' => 'description',
+            'preuve'      => 'preuve',
         ]);
+
+        $preuve = null;
+        if ($request->hasFile('preuve')) {
+            $preuve = $request->file('preuve')->store('preuves', 'public');
+        }
 
         Signalement::create([
             'course_id'   => $course->id,
@@ -42,6 +49,7 @@ class SignalementController extends Controller
             'cible'       => $cible,
             'motif'       => $data['motif'],
             'description' => $data['description'] ?? null,
+            'preuve'      => $preuve,
         ]);
 
         $route = $request->user()->isTaximan() ? 'taximan.courses.index' : 'visitor.courses.index';

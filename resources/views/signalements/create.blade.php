@@ -20,7 +20,7 @@
 
             @include('partials.flash')
 
-            <form method="POST" action="{{ route('signalements.store', $course) }}" class="mt-5 space-y-4">
+            <form method="POST" action="{{ route('signalements.store', $course) }}" enctype="multipart/form-data" class="mt-5 space-y-4">
                 @csrf
 
                 <div>
@@ -43,6 +43,17 @@
                               class="w-full rounded-xl border border-sable-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1"
                               placeholder="Decrivez ce qui s'est passe...">{{ old('description') }}</textarea>
                     @error('description') <p class="mt-1 text-xs text-terracotta-700">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label for="preuve" class="block text-sm font-medium text-nuit mb-1">
+                        Preuve <span class="text-nuit/50">(photo ou document, optionnel)</span>
+                    </label>
+                    <input id="preuve" name="preuve" type="file"
+                           accept=".jpg,.jpeg,.png,.webp,.pdf,.doc,.docx"
+                           class="block w-full text-sm text-nuit/70 file:mr-3 file:rounded-lg file:border-0 file:bg-sable-100 file:px-4 file:py-2 file:text-sm file:font-medium file:text-nuit hover:file:bg-sable-200">
+                    <p class="mt-1 text-xs text-nuit/40">Formats acceptes : JPG, PNG, WEBP, PDF, DOC. Taille max 5 Mo.</p>
+                    @error('preuve') <p class="mt-1 text-xs text-terracotta-700">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="flex justify-end">

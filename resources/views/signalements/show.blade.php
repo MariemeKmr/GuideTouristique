@@ -32,6 +32,23 @@
                 </div>
             @endif
 
+            @if ($signalement->preuve)
+                @php($ext = strtolower(pathinfo($signalement->preuve, PATHINFO_EXTENSION)))
+                <div class="mt-3">
+                    <div class="mb-1 text-xs font-medium uppercase tracking-wider text-nuit/40">Preuve jointe</div>
+                    @if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp']))
+                        <a href="{{ asset('storage/' . $signalement->preuve) }}" target="_blank" rel="noopener">
+                            <img src="{{ asset('storage/' . $signalement->preuve) }}" alt="Preuve" class="h-32 rounded-xl border border-sable-200 object-cover">
+                        </a>
+                    @else
+                        <a href="{{ asset('storage/' . $signalement->preuve) }}" target="_blank" rel="noopener"
+                           class="inline-flex items-center gap-1 rounded-lg border border-sable-300 px-3 py-1.5 text-xs font-medium text-nuit/70 hover:bg-sable-50">
+                            Telecharger la preuve
+                        </a>
+                    @endif
+                </div>
+            @endif
+
             @include('partials.flash')
 
             {{-- Conversation --}}

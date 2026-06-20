@@ -43,36 +43,44 @@
                 @endforelse
             </div>
 
-            {{-- Nouveau message --}}
-            <form method="POST" action="{{ route('objets.store', $user) }}" class="mt-5 border-t border-sable-200 pt-4">
-                @csrf
-                <label for="contenu" class="block text-sm font-medium text-nuit mb-1">Votre message</label>
-                <textarea id="contenu" name="contenu" rows="3" required
-                          class="w-full rounded-xl border border-sable-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1"
-                          placeholder="Ex : J'ai oublie un sac noir sur la banquette arriere.">{{ old('contenu') }}</textarea>
-                @error('contenu')
-                    <p class="mt-1 text-xs text-terracotta-700">{{ $message }}</p>
-                @enderror
-                <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
-                    <button type="submit"
-                            class="rounded-xl bg-terracotta px-5 py-2.5 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">
-                        Envoyer
-                    </button>
-
-                    {{-- Le chauffeur peut valider la remise de l'objet --}}
-                    @if (! $estVisiteur && ! $thread->rendu)
-                        <button type="submit" form="form-rendu"
-                                class="rounded-xl border border-green-300 px-4 py-2.5 text-sm font-semibold text-green-700 hover:bg-green-50 transition">
-                            Marquer l'objet comme rendu
-                        </button>
-                    @endif
+            {{-- Nouveau message (impossible une fois l'objet rendu) --}}
+            @if ($thread->rendu)
+                <div class="mt-5 border-t border-sable-200 pt-4">
+                    <div class="rounded-xl border border-sable-200 bg-sable-50 px-4 py-3 text-sm text-nuit/60">
+                        L'objet a ete rendu : la discussion est close, vous pouvez la consulter mais plus y repondre.
+                    </div>
                 </div>
-            </form>
+            @else
+                <form method="POST" action="{{ route('objets.store', $user) }}" class="mt-5 border-t border-sable-200 pt-4">
+                    @csrf
+                    <label for="contenu" class="block text-sm font-medium text-nuit mb-1">Votre message</label>
+                    <textarea id="contenu" name="contenu" rows="3" required
+                              class="w-full rounded-xl border border-sable-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1"
+                              placeholder="Ex : J'ai oublie un sac noir sur la banquette arriere.">{{ old('contenu') }}</textarea>
+                    @error('contenu')
+                        <p class="mt-1 text-xs text-terracotta-700">{{ $message }}</p>
+                    @enderror
+                    <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+                        <button type="submit"
+                                class="rounded-xl bg-terracotta px-5 py-2.5 text-sm font-semibold text-white shadow-soft hover:bg-terracotta-600 transition">
+                            Envoyer
+                        </button>
 
-            @if (! $estVisiteur && ! $thread->rendu)
-                <form id="form-rendu" method="POST" action="{{ route('objets.rendu', $user) }}" class="hidden">
-                    @csrf @method('PATCH')
+                        {{-- Le chauffeur peut valider la remise de l'objet --}}
+                        @if (! $estVisiteur)
+                            <button type="submit" form="form-rendu"
+                                    class="rounded-xl border border-green-300 px-4 py-2.5 text-sm font-semibold text-green-700 hover:bg-green-50 transition">
+                                Marquer l'objet comme rendu
+                            </button>
+                        @endif
+                    </div>
                 </form>
+
+                @if (! $estVisiteur)
+                    <form id="form-rendu" method="POST" action="{{ route('objets.rendu', $user) }}" class="hidden">
+                        @csrf @method('PATCH')
+                    </form>
+                @endif
             @endif
         </div>
     </main>

@@ -37,6 +37,7 @@ class Signalement extends Model
         'cible',
         'motif',
         'description',
+        'preuve',
         'lu',
     ];
 

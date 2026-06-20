@@ -32,6 +32,7 @@ class ObjetPerduController extends Controller
     {
         [$chauffeur, $visiteur] = $this->couple($request, $user);
         $thread = $this->thread($chauffeur, $visiteur);
+        abort_if($thread->rendu, 403, "L'objet a ete rendu, la discussion est close.");
 
         $data = $request->validate([
             'contenu' => ['required', 'string', 'max:1000'],
