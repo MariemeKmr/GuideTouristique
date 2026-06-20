@@ -133,6 +133,12 @@
                             @if ($course->commentaire) <span class="text-nuit/50">- {{ $course->commentaire }}</span> @endif
                         </div>
                     @endif
+
+                    @if (in_array($course->statut, ['en_course', 'terminee', 'annulee']))
+                        <div class="mt-3 border-t border-sable-200 pt-3">
+                            <a href="{{ route('signalements.create', $course) }}" class="text-xs font-medium text-nuit/50 hover:text-terracotta-700 hover:underline">Signaler un probleme</a>
+                        </div>
+                    @endif
                 </div>
             @empty
                 <div class="rounded-2xl border border-sable-200 bg-white shadow-soft p-10 text-center text-sm text-nuit/50">

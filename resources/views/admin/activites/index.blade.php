@@ -19,7 +19,7 @@
 
         @include('partials.flash')
 
-        <div class="overflow-hidden rounded-2xl border border-sable-200 bg-white shadow-soft">
+        <div class="overflow-x-auto rounded-2xl border border-sable-200 bg-white shadow-soft">
             <table class="min-w-full divide-y divide-sable-200">
                 <thead class="bg-sable-50">
                     <tr>

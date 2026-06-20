@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\TransportController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ObjetPerduController;
+use App\Http\Controllers\SignalementController;
+use App\Http\Controllers\Admin\SignalementController as AdminSignalementController;
 use App\Http\Controllers\Taximan\TaximanController;
 use App\Http\Controllers\Taximan\ClientController as TaximanClientController;
 use App\Http\Controllers\Taximan\CourseController as TaximanCourseController;
@@ -50,6 +52,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/objets/{course}', [ObjetPerduController::class, 'show'])->name('objets.show');
     Route::post('/objets/{course}', [ObjetPerduController::class, 'store'])->name('objets.store');
 
+    // Signalement d'un probleme sur une course (visiteur ou chauffeur)
+    Route::get('/signalements/{course}/nouveau', [SignalementController::class, 'create'])->name('signalements.create');
+    Route::post('/signalements/{course}', [SignalementController::class, 'store'])->name('signalements.store');
+
     /*
     | --- Espace administrateur (préfixe /admin, noms admin.*) ---
     */
@@ -59,6 +65,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('destinations', DestinationController::class)->except('show');
         Route::resource('transports', TransportController::class)->except('show');
         Route::resource('activites', ActiviteController::class)->except('show');
+
+        // Signalements recus
+        Route::get('/signalements', [AdminSignalementController::class, 'index'])->name('signalements.index');
+        Route::patch('/signalements/{signalement}/traite', [AdminSignalementController::class, 'marquerTraite'])->name('signalements.read');
     });
 
     /*
