@@ -3,51 +3,96 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\ObjetThread;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ObjetPerduController extends Controller
 {
-    public function show(Request $request, Course $course): View
+    public function show(Request $request, User $user): View
     {
-        $this->autorise($request, $course);
+        [$chauffeur, $visiteur] = $this->couple($request, $user);
+        $thread = $this->thread($chauffeur, $visiteur);
 
         // Ouvrir le fil marque comme lus les messages recus.
-        $course->messagesObjet()
+        $thread->messages()
             ->where('expediteur_id', '!=', $request->user()->id)
             ->where('lu', false)
             ->update(['lu' => true]);
 
-        $messages = $course->messagesObjet()->with('expediteur')->oldest()->get();
+        $messages    = $thread->messages()->with('expediteur')->oldest()->get();
+        $estVisiteur = $request->user()->id === $visiteur->id;
 
-        return view('objets.show', compact('course', 'messages'));
+        return view('objets.show', compact('thread', 'messages', 'user', 'estVisiteur'));
     }
 
-    public function store(Request $request, Course $course): RedirectResponse
+    public function store(Request $request, User $user): RedirectResponse
     {
-        $this->autorise($request, $course);
+        [$chauffeur, $visiteur] = $this->couple($request, $user);
+        $thread = $this->thread($chauffeur, $visiteur);
 
         $data = $request->validate([
             'contenu' => ['required', 'string', 'max:1000'],
-        ], [], [
-            'contenu' => 'message',
-        ]);
+        ], [], ['contenu' => 'message']);
 
-        $course->messagesObjet()->create([
+        $thread->messages()->create([
             'expediteur_id' => $request->user()->id,
             'contenu'       => $data['contenu'],
         ]);
 
-        return redirect()
-            ->route('objets.show', $course)
-            ->with('success', 'Message envoye.');
+        return redirect()->route('objets.show', $user)->with('success', 'Message envoye.');
     }
 
-    /** Seuls le visiteur et le chauffeur de la course accedent au fil. */
-    private function autorise(Request $request, Course $course): void
+    /** Le chauffeur valide que l'objet a ete rendu : le client est notifie. */
+    public function marquerRendu(Request $request, User $user): RedirectResponse
     {
-        $id = $request->user()->id;
-        abort_unless(in_array($id, [$course->visiteur_id, $course->chauffeur_id], true), 403);
+        [$chauffeur, $visiteur] = $this->couple($request, $user);
+        abort_unless($request->user()->id === $chauffeur->id, 403);
+
+        $thread = $this->thread($chauffeur, $visiteur);
+        $thread->update(['rendu' => true]);
+
+        $thread->messages()->create([
+            'expediteur_id' => $chauffeur->id,
+            'contenu'       => "L'objet a ete recupere.",
+        ]);
+
+        return back()->with('success', 'Objet marque comme rendu. Le client est notifie.');
+    }
+
+    /**
+     * Determine le couple (chauffeur, visiteur) a partir de l'utilisateur courant
+     * et de l'autre participant, et verifie qu'ils ont partage au moins une course.
+     *
+     * @return array{0: User, 1: User}
+     */
+    private function couple(Request $request, User $autre): array
+    {
+        $moi = $request->user();
+
+        if ($moi->isTaximan() && $autre->isVisiteur()) {
+            [$chauffeur, $visiteur] = [$moi, $autre];
+        } elseif ($moi->isVisiteur() && $autre->isTaximan()) {
+            [$chauffeur, $visiteur] = [$autre, $moi];
+        } else {
+            abort(403);
+        }
+
+        abort_unless(
+            Course::where('chauffeur_id', $chauffeur->id)->where('visiteur_id', $visiteur->id)->exists(),
+            403
+        );
+
+        return [$chauffeur, $visiteur];
+    }
+
+    private function thread(User $chauffeur, User $visiteur): ObjetThread
+    {
+        return ObjetThread::firstOrCreate([
+            'chauffeur_id' => $chauffeur->id,
+            'visiteur_id'  => $visiteur->id,
+        ]);
     }
 }

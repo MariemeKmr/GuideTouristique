@@ -49,8 +49,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Objet perdu : fil de discussion anonyme entre le client et le chauffeur d'une course.
-    Route::get('/objets/{course}', [ObjetPerduController::class, 'show'])->name('objets.show');
-    Route::post('/objets/{course}', [ObjetPerduController::class, 'store'])->name('objets.store');
+    Route::get('/objets/{user}', [ObjetPerduController::class, 'show'])->name('objets.show');
+    Route::post('/objets/{user}', [ObjetPerduController::class, 'store'])->name('objets.store');
+    Route::patch('/objets/{user}/rendu', [ObjetPerduController::class, 'marquerRendu'])->name('objets.rendu');
 
     // Signalement d'un probleme sur une course (visiteur ou chauffeur)
     Route::get('/signalements/{course}/nouveau', [SignalementController::class, 'create'])->name('signalements.create');

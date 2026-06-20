@@ -11,7 +11,7 @@ class ObjetMessage extends Model
     use HasUuids;
 
     protected $fillable = [
-        'course_id',
+        'thread_id',
         'expediteur_id',
         'contenu',
         'lu',
@@ -22,9 +22,9 @@ class ObjetMessage extends Model
         return ['lu' => 'boolean'];
     }
 
-    public function course(): BelongsTo
+    public function thread(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(ObjetThread::class, 'thread_id');
     }
 
     public function expediteur(): BelongsTo
