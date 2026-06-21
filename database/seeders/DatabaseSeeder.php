@@ -42,7 +42,57 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-        User::factory(8)->create();
+        // Profil du chauffeur de demonstration (Moussa).
+        $moussaCompte = User::where('email', 'taximan@guide.test')->first();
+        if ($moussaCompte) {
+            ChauffeurProfile::updateOrCreate(['user_id' => $moussaCompte->id], [
+                'zone'            => 'Dakar - Plateau',
+                'vehicule'        => 'Toyota Corolla blanche',
+                'tarif_indicatif' => '2 500 FCFA / course',
+                'disponible'      => true,
+                'bio'             => 'Chauffeur ponctuel et sympathique, connait bien Dakar et ses environs.',
+            ]);
+        }
+
+        // Chauffeurs supplementaires pour etoffer l'annuaire (donnees explicites, sans Faker).
+        $chauffeursDemo = [
+            ['first_name' => 'Cheikh', 'last_name' => 'Ndiaye', 'email' => 'cheikh.ndiaye@example.com', 'phone' => '+221 77 333 33 33',
+             'zone' => 'Almadies', 'vehicule' => 'Hyundai Accent grise', 'tarif_indicatif' => '3 000 FCFA / course', 'disponible' => true,
+             'bio' => 'Specialiste des transferts aeroport et des longues distances.'],
+            ['first_name' => 'Awa', 'last_name' => 'Sow', 'email' => 'awa.sow@example.com', 'phone' => '+221 77 444 44 44',
+             'zone' => 'Yoff', 'vehicule' => 'Peugeot 301 noire', 'tarif_indicatif' => '2 000 FCFA / course', 'disponible' => true,
+             'bio' => 'Conduite douce, ideale pour decouvrir la ville en toute tranquillite.'],
+            ['first_name' => 'Ibrahima', 'last_name' => 'Ba', 'email' => 'ibrahima.ba@example.com', 'phone' => '+221 77 555 55 55',
+             'zone' => 'Parcelles Assainies', 'vehicule' => 'Renault Logan beige', 'tarif_indicatif' => '2 500 FCFA / course', 'disponible' => false,
+             'bio' => 'Disponible en soiree et le week-end pour vos deplacements.'],
+        ];
+        foreach ($chauffeursDemo as $c) {
+            $compte = User::updateOrCreate(['email' => $c['email']], [
+                'first_name' => $c['first_name'], 'last_name' => $c['last_name'],
+                'phone' => $c['phone'], 'role' => User::ROLE_TAXIMAN,
+                'password' => Hash::make('password'),
+            ]);
+            ChauffeurProfile::updateOrCreate(['user_id' => $compte->id], [
+                'zone'            => $c['zone'],
+                'vehicule'        => $c['vehicule'],
+                'tarif_indicatif' => $c['tarif_indicatif'],
+                'disponible'      => $c['disponible'],
+                'bio'             => $c['bio'],
+            ]);
+        }
+
+        // Visiteurs supplementaires (donnees explicites).
+        $visiteursDemo = [
+            ['first_name' => 'Mariama', 'last_name' => 'Diallo', 'email' => 'mariama.diallo@example.com', 'phone' => '+221 76 111 22 33'],
+            ['first_name' => 'Ousmane', 'last_name' => 'Sarr', 'email' => 'ousmane.sarr@example.com', 'phone' => '+221 76 222 33 44'],
+        ];
+        foreach ($visiteursDemo as $v) {
+            User::updateOrCreate(['email' => $v['email']], [
+                'first_name' => $v['first_name'], 'last_name' => $v['last_name'],
+                'phone' => $v['phone'], 'role' => User::ROLE_VISITEUR,
+                'password' => Hash::make('password'),
+            ]);
+        }
 
         /*
         |--------------------------------------------------------------------
@@ -117,12 +167,7 @@ class DatabaseSeeder extends Seeder
         | Profils chauffeurs pour chaque utilisateur de role taximan
         |--------------------------------------------------------------------
         */
-        User::where('role', User::ROLE_TAXIMAN)->get()->each(function (User $taximan) {
-            ChauffeurProfile::firstOrCreate(
-                ['user_id' => $taximan->id],
-                ChauffeurProfile::factory()->make()->getAttributes()
-            );
-        });
+        // Tous les chauffeurs disposent deja d'un profil explicite cree plus haut.
 
         // Activites reelles (apres les destinations pour pouvoir les lier)
         $this->call(ActiviteSeeder::class);
