@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tableau de bord — Chauffeur')
+@section('title', 'Tableau de bord - Chauffeur')
 
 @section('content')
     @include('partials.navbar')
