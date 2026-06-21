@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
@@ -39,19 +41,42 @@ class AuthController extends Controller
             'password' => 'mot de passe',
         ]);
 
+        $key = $this->throttleKey($request);
+
+        // Trop de tentatives recentes : on bloque temporairement.
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $secondes = RateLimiter::availableIn($key);
+
+            return back()
+                ->withErrors(['email' => "Trop de tentatives de connexion. Reessayez dans {$secondes} secondes."])
+                ->onlyInput('email');
+        }
+
         $remember = $request->boolean('remember');
 
         if (! Auth::attempt($credentials, $remember)) {
+            // Echec : on incremente le compteur (fenetre d'une minute).
+            RateLimiter::hit($key, 60);
+
             return back()
                 ->withErrors(['email' => 'Ces identifiants ne correspondent à aucun compte.'])
                 ->onlyInput('email');
         }
+
+        // Succes : on remet le compteur a zero.
+        RateLimiter::clear($key);
 
         // Sécurité : régénère l'ID de session après connexion.
         $request->session()->regenerate();
 
         // Redirige vers la page demandée à l'origine, sinon le dashboard du rôle.
         return redirect()->intended(route('dashboard'));
+    }
+
+    /** Cle de limitation basee sur l'email et l'adresse IP. */
+    private function throttleKey(Request $request): string
+    {
+        return Str::transliterate(Str::lower((string) $request->input('email')) . '|' . $request->ip());
     }
 
     /*
