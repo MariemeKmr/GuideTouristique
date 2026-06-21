@@ -51,9 +51,8 @@
 
                 @if ($u->isVisiteur())
                     <div class="hidden md:flex items-center gap-1">
-                        <a href="{{ route('visitor.destinations.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.destinations.*') || request()->routeIs('visitor.transports.*') ? $active : $idle }}">Decouvrir</a>
+                        <a href="{{ route('visitor.destinations.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.destinations.*') || request()->routeIs('visitor.transports.*') || request()->routeIs('visitor.activites.*') ? $active : $idle }}">Decouvrir</a>
                         <a href="{{ route('visitor.visits') }}" class="{{ $link }} {{ request()->routeIs('visitor.visits') ? $active : $idle }}">Mes visites</a>
-                        <a href="{{ route('visitor.activites.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.activites.*') ? $active : $idle }}">Activites</a>
                         <a href="{{ route('visitor.drivers.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.drivers.*') ? $active : $idle }}">Chauffeurs</a>
                         <a href="{{ route('visitor.courses.index') }}" class="{{ $link }} {{ request()->routeIs('visitor.courses.*') ? $active : $idle }}">
                             Mes courses
@@ -137,9 +136,8 @@
             @endif
 
             @if ($u->isVisiteur())
-                <a href="{{ route('visitor.destinations.index') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.destinations.*') || request()->routeIs('visitor.transports.*') ? $active : $midle }}">Decouvrir</a>
+                <a href="{{ route('visitor.destinations.index') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.destinations.*') || request()->routeIs('visitor.transports.*') || request()->routeIs('visitor.activites.*') ? $active : $midle }}">Decouvrir</a>
                 <a href="{{ route('visitor.visits') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.visits') ? $active : $midle }}">Mes visites</a>
-                <a href="{{ route('visitor.activites.index') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.activites.*') ? $active : $midle }}">Activites</a>
                 <a href="{{ route('visitor.drivers.index') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.drivers.*') ? $active : $midle }}">Chauffeurs</a>
                 <a href="{{ route('visitor.courses.index') }}" class="{{ $mlink }} {{ request()->routeIs('visitor.courses.*') ? $active : $midle }}">
                     Mes courses

@@ -18,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        // Fichier televerse trop volumineux : on revient au formulaire avec un message clair.
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\PostTooLargeException $e, $request) {
+            return back()->with('error', "Le fichier envoye est trop volumineux. Reduisez sa taille (5 Mo maximum) et reessayez.");
+        });
+
         // Un acces interdit (403) ne montre pas une page d'erreur :
         // on renvoie la personne vers son espace en l'informant, sans la deconnecter.
         $exceptions->render(function (HttpExceptionInterface $e, $request) {

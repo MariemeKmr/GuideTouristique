@@ -2,7 +2,7 @@
 
 use App\Models\User;
 
-it('redirige chaque rôle vers son tableau de bord', function () {
+it('redirige chaque role vers son tableau de bord', function () {
     $admin    = User::factory()->create(['role' => 'admin']);
     $visiteur = User::factory()->create(['role' => 'visiteur']);
     $taximan  = User::factory()->create(['role' => 'taximan']);
@@ -12,14 +12,52 @@ it('redirige chaque rôle vers son tableau de bord', function () {
     $this->actingAs($taximan)->get(route('dashboard'))->assertRedirect(route('taximan.dashboard'));
 });
 
-it('interdit à un visiteur l\'accès à l\'espace admin', function () {
+it('renvoie un visiteur vers son espace s\'il tente d\'acceder a l\'admin', function () {
     $visiteur = User::factory()->create(['role' => 'visiteur']);
 
     $this->actingAs($visiteur)
         ->get(route('admin.destinations.index'))
-        ->assertForbidden();
+        ->assertRedirect(route('visitor.dashboard'))
+        ->assertSessionHas('error');
 });
 
-it('redirige un invité vers la connexion', function () {
+it('renvoie un taximan vers son espace s\'il tente d\'acceder a l\'admin', function () {
+    $taximan = User::factory()->create(['role' => 'taximan']);
+
+    $this->actingAs($taximan)
+        ->get(route('admin.destinations.index'))
+        ->assertRedirect(route('taximan.dashboard'))
+        ->assertSessionHas('error');
+});
+
+it('renvoie un visiteur vers son espace s\'il tente d\'acceder a l\'espace chauffeur', function () {
+    $visiteur = User::factory()->create(['role' => 'visiteur']);
+
+    $this->actingAs($visiteur)
+        ->get(route('taximan.courses.index'))
+        ->assertRedirect(route('visitor.dashboard'))
+        ->assertSessionHas('error');
+});
+
+it('renvoie un taximan vers son espace s\'il tente d\'acceder a l\'espace visiteur', function () {
+    $taximan = User::factory()->create(['role' => 'taximan']);
+
+    $this->actingAs($taximan)
+        ->get(route('visitor.courses.index'))
+        ->assertRedirect(route('taximan.dashboard'))
+        ->assertSessionHas('error');
+});
+
+it('autorise chaque role a consulter son propre espace', function () {
+    $admin    = User::factory()->create(['role' => 'admin']);
+    $visiteur = User::factory()->create(['role' => 'visiteur']);
+    $taximan  = User::factory()->create(['role' => 'taximan']);
+
+    $this->actingAs($admin)->get(route('admin.destinations.index'))->assertOk();
+    $this->actingAs($visiteur)->get(route('visitor.courses.index'))->assertOk();
+    $this->actingAs($taximan)->get(route('taximan.courses.index'))->assertOk();
+});
+
+it('redirige un invite vers la connexion', function () {
     $this->get(route('dashboard'))->assertRedirect(route('login'));
 });
