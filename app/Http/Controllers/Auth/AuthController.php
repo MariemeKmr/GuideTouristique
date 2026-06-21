@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password as PasswordBroker;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
@@ -123,6 +125,72 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         return redirect()->route('dashboard');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mot de passe oublie / reinitialisation
+    |--------------------------------------------------------------------------
+    */
+
+    /** Formulaire de demande de lien de reinitialisation. */
+    public function showForgotPassword(): View
+    {
+        return view('auth.forgot-password');
+    }
+
+    /** Envoie le lien de reinitialisation par email. */
+    public function sendResetLink(Request $request): RedirectResponse
+    {
+        $request->validate(['email' => ['required', 'email']], [], ['email' => 'adresse email']);
+
+        $status = PasswordBroker::sendResetLink($request->only('email'));
+
+        if ($status === PasswordBroker::RESET_THROTTLED) {
+            return back()
+                ->withErrors(['email' => 'Veuillez patienter avant de redemander un lien.'])
+                ->onlyInput('email');
+        }
+
+        // Message neutre, identique que le compte existe ou non (anti-enumeration).
+        return back()->with('success', "Si un compte correspond a cette adresse, un lien de reinitialisation vient d'etre envoye.");
+    }
+
+    /** Formulaire de saisie du nouveau mot de passe. */
+    public function showResetPassword(Request $request, string $token): View
+    {
+        return view('auth.reset-password', [
+            'token' => $token,
+            'email' => $request->query('email'),
+        ]);
+    }
+
+    /** Enregistre le nouveau mot de passe. */
+    public function resetPassword(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'token'    => ['required'],
+            'email'    => ['required', 'email'],
+            'password' => ['required', 'confirmed', Password::min(8)],
+        ], [], [
+            'email'    => 'adresse email',
+            'password' => 'mot de passe',
+        ]);
+
+        $status = PasswordBroker::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                // Le cast 'password' => 'hashed' du modele se charge du hachage.
+                $user->forceFill(['password' => $password])->save();
+                $user->setRememberToken(Str::random(60));
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        return $status === PasswordBroker::PASSWORD_RESET
+            ? redirect()->route('login')->with('success', 'Votre mot de passe a ete reinitialise, vous pouvez vous connecter.')
+            : back()->withErrors(['email' => __($status)])->onlyInput('email');
     }
 
     /*

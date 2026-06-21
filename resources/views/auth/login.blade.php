@@ -6,6 +6,12 @@
     <h1 class="text-xl font-semibold text-nuit mb-1">Connexion</h1>
     <p class="text-sm text-gray-500 mb-6">Accédez à votre espace.</p>
 
+    @if (session('success'))
+        <div class="mb-4 rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
+            {{ session('success') }}
+        </div>
+    @endif
+
     {{-- Erreurs de validation globales --}}
     @if ($errors->any())
         <div class="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3">
@@ -35,6 +41,9 @@
             </label>
             <input id="password" name="password" type="password" required autocomplete="current-password"
                    class="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm focus:border-lagon focus:ring-lagon focus:outline-none focus:ring-1">
+            <div class="mt-1 text-right">
+                <a href="{{ route('password.request') }}" class="text-xs text-nuit/60 hover:underline">Mot de passe oublie ?</a>
+            </div>
         </div>
 
         <div class="flex items-center">
