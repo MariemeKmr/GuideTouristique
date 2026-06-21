@@ -1,0 +1,58 @@
+# Blueprint Render : service web Docker + base PostgreSQL gratuite.
+databases:
+  - name: guidetouristique-db
+    databaseName: guidetouristique
+    user: guidetouristique
+    plan: free
+
+services:
+  - type: web
+    name: guidetouristique
+    runtime: docker
+    plan: free
+    healthCheckPath: /login
+    envVars:
+      - key: APP_KEY
+        sync: false            # a definir : php artisan key:generate --show
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        sync: false            # ex : https://guidetouristique.onrender.com
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: guidetouristique-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: guidetouristique-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: guidetouristique-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: guidetouristique-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: guidetouristique-db
+          property: password
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: FILESYSTEM_DISK
+        value: local
+      - key: MAIL_MAILER
+        value: log
+      - key: SEED_ON_DEPLOY
+        value: "true"

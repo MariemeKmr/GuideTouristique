@@ -11,6 +11,8 @@
 
         @include('partials.flash')
 
+        @include('partials.search-bar', ['action' => route('visitor.drivers.index'), 'q' => $q, 'placeholder' => 'Rechercher un chauffeur, une zone, un vehicule...'])
+
         <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($drivers as $driver)
                 @php($profile = $driver->chauffeurProfile)
@@ -54,7 +56,7 @@
                 </div>
             @empty
                 <div class="col-span-full rounded-2xl border border-sable-200 bg-white shadow-soft p-10 text-center text-sm text-gray-500">
-                    Aucun chauffeur inscrit pour le moment.
+                    {{ $q !== '' ? 'Aucun chauffeur ne correspond a votre recherche.' : 'Aucun chauffeur inscrit pour le moment.' }}
                 </div>
             @endforelse
         </div>

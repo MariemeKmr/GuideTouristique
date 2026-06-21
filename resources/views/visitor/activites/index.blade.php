@@ -12,17 +12,25 @@
 
         {{-- Filtre par categorie --}}
         <div class="mt-6 flex flex-wrap items-center gap-2">
-            <a href="{{ route('visitor.activites.index') }}"
+            <a href="{{ route('visitor.activites.index', $q !== '' ? ['q' => $q] : []) }}"
                class="rounded-full px-3.5 py-1.5 text-sm font-medium transition {{ ! $courante ? 'bg-lagon text-white' : 'border border-sable-300 text-nuit/70 hover:bg-sable-50' }}">
                 Toutes
             </a>
             @foreach ($categories as $cle => $libelle)
-                <a href="{{ route('visitor.activites.index', ['categorie' => $cle]) }}"
+                <a href="{{ route('visitor.activites.index', array_filter(['categorie' => $cle, 'q' => $q])) }}"
                    class="rounded-full px-3.5 py-1.5 text-sm font-medium transition {{ $courante === $cle ? 'bg-lagon text-white' : 'border border-sable-300 text-nuit/70 hover:bg-sable-50' }}">
                     {{ $libelle }}
                 </a>
             @endforeach
         </div>
+
+        @include('partials.search-bar', [
+            'action'      => route('visitor.activites.index'),
+            'q'           => $q,
+            'placeholder' => 'Rechercher une activite, un lieu...',
+            'hidden'      => ['categorie' => $courante],
+            'resetUrl'    => route('visitor.activites.index', $courante ? ['categorie' => $courante] : []),
+        ])
 
         <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($activites as $activite)
@@ -48,7 +56,7 @@
                 </div>
             @empty
                 <div class="col-span-full rounded-2xl border border-sable-200 bg-white shadow-soft p-10 text-center text-sm text-nuit/50">
-                    Aucune activite dans cette categorie pour le moment.
+                    {{ $q !== '' ? 'Aucune activite ne correspond a votre recherche.' : 'Aucune activite dans cette categorie pour le moment.' }}
                 </div>
             @endforelse
         </div>

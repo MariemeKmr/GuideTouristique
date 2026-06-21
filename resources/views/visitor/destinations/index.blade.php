@@ -12,6 +12,8 @@
 
         @include('partials.flash')
 
+        @include('partials.search-bar', ['action' => route('visitor.destinations.index'), 'q' => $q, 'placeholder' => 'Rechercher une destination, une localite...'])
+
         <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($destinations as $destination)
                 <a href="{{ route('visitor.destinations.show', $destination) }}"
@@ -31,7 +33,7 @@
                 </a>
             @empty
                 <div class="col-span-full rounded-2xl border border-sable-200 bg-white shadow-soft p-10 text-center text-sm text-gray-500">
-                    Aucune destination disponible pour le moment.
+                    {{ $q !== '' ? 'Aucune destination ne correspond a votre recherche.' : 'Aucune destination disponible pour le moment.' }}
                 </div>
             @endforelse
         </div>

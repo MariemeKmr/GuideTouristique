@@ -12,6 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Confiance aux proxys (HTTPS termine par l'hebergeur, ex. Render).
+        $middleware->trustProxies(at: '*');
+
         // Alias du middleware de controle de role.
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,

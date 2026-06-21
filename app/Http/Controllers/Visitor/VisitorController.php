@@ -25,12 +25,25 @@ class VisitorController extends Controller
 
     public function destinations(Request $request): View
     {
-        $destinations = Destination::orderBy('name')->paginate(12);
+        $q = trim((string) $request->query('q', ''));
+
+        $destinations = Destination::query()
+            ->when($q !== '', function ($query) use ($q) {
+                $like = '%' . mb_strtolower($q) . '%';
+                $query->where(function ($sub) use ($like) {
+                    $sub->whereRaw('LOWER(name) LIKE ?', [$like])
+                        ->orWhereRaw('LOWER(localite) LIKE ?', [$like])
+                        ->orWhereRaw('LOWER(description) LIKE ?', [$like]);
+                });
+            })
+            ->orderBy('name')
+            ->paginate(12)
+            ->withQueryString();
 
         // IDs des destinations déjà visitées par l'utilisateur (pour le badge).
         $visitedIds = $request->user()->destinations()->pluck('destinations.id')->all();
 
-        return view('visitor.destinations.index', compact('destinations', 'visitedIds'));
+        return view('visitor.destinations.index', compact('destinations', 'visitedIds', 'q'));
     }
 
     public function showDestination(Request $request, Destination $destination): View
@@ -196,14 +209,28 @@ class VisitorController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function drivers(): View
+    public function drivers(Request $request): View
     {
+        $q = trim((string) $request->query('q', ''));
+
         $drivers = User::where('role', User::ROLE_TAXIMAN)
             ->with('chauffeurProfile')
+            ->when($q !== '', function ($query) use ($q) {
+                $like = '%' . mb_strtolower($q) . '%';
+                $query->where(function ($sub) use ($like) {
+                    $sub->whereRaw('LOWER(first_name) LIKE ?', [$like])
+                        ->orWhereRaw('LOWER(last_name) LIKE ?', [$like])
+                        ->orWhereHas('chauffeurProfile', function ($p) use ($like) {
+                            $p->whereRaw('LOWER(zone) LIKE ?', [$like])
+                              ->orWhereRaw('LOWER(vehicule) LIKE ?', [$like]);
+                        });
+                });
+            })
             ->orderBy('first_name')
-            ->paginate(12);
+            ->paginate(12)
+            ->withQueryString();
 
-        return view('visitor.drivers.index', compact('drivers'));
+        return view('visitor.drivers.index', compact('drivers', 'q'));
     }
 
     public function showDriver(User $user): View
@@ -225,9 +252,18 @@ class VisitorController extends Controller
     public function activites(Request $request): View
     {
         $categorie = $request->query('categorie');
+        $q         = trim((string) $request->query('q', ''));
 
         $activites = Activite::with('destination')
-            ->when($categorie, fn ($q) => $q->where('categorie', $categorie))
+            ->when($categorie, fn ($query) => $query->where('categorie', $categorie))
+            ->when($q !== '', function ($query) use ($q) {
+                $like = '%' . mb_strtolower($q) . '%';
+                $query->where(function ($sub) use ($like) {
+                    $sub->whereRaw('LOWER(nom) LIKE ?', [$like])
+                        ->orWhereRaw('LOWER(lieu) LIKE ?', [$like])
+                        ->orWhereRaw('LOWER(description) LIKE ?', [$like]);
+                });
+            })
             ->orderBy('nom')
             ->paginate(12)
             ->withQueryString();
@@ -236,6 +272,7 @@ class VisitorController extends Controller
             'activites'  => $activites,
             'categories' => Activite::CATEGORIES,
             'courante'   => $categorie,
+            'q'          => $q,
         ]);
     }
 }
